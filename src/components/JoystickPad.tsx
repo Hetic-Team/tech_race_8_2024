@@ -1,7 +1,7 @@
 // import { Joystick } from 'react-joystick-component';
 // import React, { useState, useEffect } from 'react';
 // import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-// import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload} from '@/services/MovementService'; 
+// import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload} from '@/services/MovementService';
 // import { BASE_URL } from '@/constants/Urls';
 
 // export const JoystickPad = () => {
@@ -35,7 +35,7 @@
 //   }, []);
 
 //   // const [input, setInput] = useState('');
-  
+
 //   // const sendMessage = () => {
 //   //   if (ws && input) {
 //   //     ws.send(input);
@@ -45,7 +45,7 @@
 //   // };
 
 //   const sendPayload = (payload: { cmd: number; data: number[]; }) => {
-    
+
 //     if (ws) {
 //       ws.send(JSON.stringify(payload));
 //       setMessages(prevMessages => [...prevMessages, `You: ${JSON.stringify(payload)}`]);
@@ -77,7 +77,6 @@
 
 //     };
 //     // sendDirectionToAPI(type);
-
 
 //   return (
 //     <Joystick size={100} throttle={50} sticky={true} baseColor="red" stickColor="blue" start={handleButtonPress} move={handleButtonPress} stop={handleButtonPress}></Joystick>

@@ -1,29 +1,28 @@
 /* eslint-disable prettier/prettier */
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
-import  { Colors } from '../constants/Colors'
+import {TouchableOpacity, Text, StyleSheet, View} from 'react-native';
+import {Colors} from '../constants/Colors';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-
-
 type ButtonProps = {
-    label: string,
-    onClick: () => void,
+  label: string;
+  onClick: () => void;
 };
 
-export function Button(props: ButtonProps){
-  
-return (
+export function Button(props: ButtonProps) {
+  return (
     <View>
-        <Text style={styles.button} onPress={props.onClick}>{props.label}</Text>
+      <Text style={styles.button} onPress={props.onClick}>
+        {props.label}
+      </Text>
     </View>
-);
-};
+  );
+}
 
 const styles = StyleSheet.create({
-button: {
+  button: {
     /*flex: 1,
     width: '100%',
     justifyContent: 'center',
@@ -42,11 +41,11 @@ button: {
     color: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-},
-buttonText: {
+  },
+  buttonText: {
     color: '#ffffff',
     fontSize: 20,
-},
+  },
 });
-  
+
 export default Button;

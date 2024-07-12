@@ -1,7 +1,7 @@
 // import { Joystick } from 'react-joystick-component';
 // import React, { useState, useEffect } from 'react';
 // import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-// import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload, mapJoystickToCameraAngles} from '@/services/MovementService'; 
+// import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload, mapJoystickToCameraAngles} from '@/services/MovementService';
 // import { BASE_URL } from '@/constants/Urls';
 
 // export const JoystickCamera = () => {
@@ -35,10 +35,10 @@
 //   }, []);
 //   /**
 //    * Send request to the API
-//    * @param payload 
+//    * @param payload
 //    */
 //   const sendPayload = (payload: { cmd: number; data: number[]; }) => {
-    
+
 //     if (ws) {
 //       ws.send(JSON.stringify(payload));
 //       setMessages(prevMessages => [...prevMessages, `You: ${JSON.stringify(payload)}`]);
@@ -46,7 +46,7 @@
 //   };
 //   /**
 //    * Handle the joystick movement
-//    * @param e 
+//    * @param e
 //    */
 //   const handleButtonPress = (e: any) => {
 //     console.log('Button pressed:', e);
@@ -57,7 +57,7 @@
 //       data: mapJoystickToCameraAngles(xVal, yVal),
 //     });
 //   };
-  
+
 //   return (
 //     <Joystick size={100} throttle={50} sticky={true} baseColor="red" stickColor="blue" move={handleButtonPress}></Joystick>
 //   );
