@@ -6,7 +6,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Button from '@/components/Button';
+import Button from '../components/Button';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '@/app/index';
@@ -17,14 +17,14 @@ export default function SplashScreen() {
 
   const handleStart = () => {
     console.log('Button Start');
-    navigation.navigate('Login');
+    navigation.navigate('DriveManually');
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.centeredContent}>
         <Image
-          source={require('@/assets/images/logo.png')}
+          source={require('../assets/images/logo.png')}
           style={styles.logo}
         />
         <Text style={styles.text}>Tech no. 8</Text>

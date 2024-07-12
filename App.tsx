@@ -27,6 +27,8 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import SplashScreen from './src/screens/SplashScreen';
+import DriveManually from './src/screens/DriveManually';
 
 function HomeScreen() {
   return (
@@ -47,9 +49,13 @@ function App(): React.JSX.Element {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+    <Stack.Navigator initialRouteName="SplashScreen"
+       screenOptions={{ headerShown: false }} 
+      >
         <Stack.Screen name="Home" component={HomeScreen} />
-        {/* <Stack.Screen name="Start" component={SplashScreen} />
+        <Stack.Screen name="SplashScreen" component={SplashScreen} />
+        <Stack.Screen name="DriveManually" component={DriveManually} />
+        {/* 
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="HomePage" component={HomePage} />
         <Stack.Screen name="MoreInfo" component={MoreInfo} />

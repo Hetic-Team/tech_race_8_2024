@@ -1,10 +1,10 @@
-import { Colors } from "@/constants/Colors";
+// import { Colors } from "@/constants/Colors";
 import React, { useEffect } from "react";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import { Provider } from "@react-native-material/core";
+// import {
+//   widthPercentageToDP as wp,
+//   heightPercentageToDP as hp,
+// } from "react-native-responsive-screen";
+// import { Provider } from "@react-native-material/core";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/app/index";
@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import Joystick from "../components/Joystick";
 
 // import { Joystick } from "@/components/Joystick";
 
@@ -29,7 +30,7 @@ export default function DriveManually() {
 
   const handleStart = () => {
     console.log("Button Start");
-    navigation.navigate("Login");
+    navigation.navigate("DriveManually");
   };
   useEffect(() => {
     // // Lock the orientation to landscape when this component mounts
@@ -42,7 +43,7 @@ export default function DriveManually() {
   }, []);
 
   return (
-    <Provider>
+    // <Provider>
       <SafeAreaView style={styles.container}>
         <View style={styles.joystick}>
           <JoystickPad/>
@@ -52,11 +53,12 @@ export default function DriveManually() {
               <JoystickCamera />
                 
               </View>
+              {/* <Joystick/> */}
        
-        <SettingsPopup />
+        {/* <SettingsPopup /> */}
         
       </SafeAreaView>
-    </Provider>
+    // </Provider>
   );
 }
 
