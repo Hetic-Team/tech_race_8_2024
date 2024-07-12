@@ -1,4 +1,4 @@
-import {Colors} from '@/constants/Colors';
+import {Colors} from '../constants/Colors';
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {
@@ -7,7 +7,7 @@ import {
 } from 'react-native-responsive-screen';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '@/app/index';
+import {RootStackParamList} from '../../App';
 
 export default function AutoDrive() {
   const navigation =

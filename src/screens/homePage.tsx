@@ -1,5 +1,5 @@
-import Button from '@/components/Button';
-import {Colors} from '@/constants/Colors';
+import Button from '../components/Button';
+import {Colors} from '../constants/Colors';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {
@@ -7,7 +7,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useRoute, RouteProp} from '@react-navigation/native';
-import {RootStackParamList} from '.';
+import {RootStackParamList} from '../../App';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
