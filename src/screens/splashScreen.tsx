@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import {Colors} from '../constants/Colors';
+import {Colors} from '@/constants/Colors';
 import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import {
@@ -9,21 +9,22 @@ import {
 import Button from '../components/Button';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '@/app/index';
 
 export default function SplashScreen() {
-  //const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleStart = () => {
     console.log('Button Start');
-    //navigation.navigate('Login');
+    navigation.navigate('DriveManually');
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.centeredContent}>
         <Image
-          //source={require('@/assets/images/logo.png')}
+          source={require('../assets/images/logo.png')}
           style={styles.logo}
         />
         <Text style={styles.text}>Tech no. 8</Text>

@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
 export type RootStackParamList = {
-  Start: undefined;
+  SplashScreen: undefined;
   // Login: undefined;
   // HomePage: { vehicleIP: string };
   // AutoDrive: undefined;
@@ -23,10 +23,10 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function HomeScreen() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Start"
+      <Stack.Navigator initialRouteName="SplashScreen"
        screenOptions={{ headerShown: false }} 
       >
-        <Stack.Screen name="Start" component={SplashScreen} />
+        <Stack.Screen name="SplashScreen" component={SplashScreen} />
         {/* <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="HomePage" component={HomePage} />
         <Stack.Screen name="MoreInfo" component={MoreInfo} />
