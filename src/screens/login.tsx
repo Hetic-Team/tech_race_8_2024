@@ -19,7 +19,7 @@ export default function LoginScreen() {
   const realVehiculeIP = '1234';
 
   // Hook de navigation pour naviguer entre les écrans
-  //const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleSubmit = () => {
     setErrorIP('');
@@ -33,7 +33,7 @@ export default function LoginScreen() {
     }
 
     if (vehicleIP === realVehiculeIP) {
-      //navigation.navigate('HomePage', {vehicleIP});
+      navigation.navigate('HomePage', {vehicleIP});
     }
   };
 
