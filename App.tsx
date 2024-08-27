@@ -3,6 +3,7 @@ import SplashScreen from './src/screens/splashScreen';
 import LoginScreen from './src/screens/login';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import DriveManually from './src/screens/driveManually';
 
 
 export type RootStackParamList = {
@@ -27,6 +28,7 @@ export default function HomeScreen() {
        screenOptions={{ headerShown: false }} 
       >
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
+        <Stack.Screen name="DriveManually" component={DriveManually} />
         {/* <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="HomePage" component={HomePage} />
         <Stack.Screen name="MoreInfo" component={MoreInfo} />
