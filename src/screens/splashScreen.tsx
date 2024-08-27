@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import {Colors} from '@/constants/Colors';
+
 import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import {
@@ -9,14 +9,13 @@ import {
 import Button from '../components/Button';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '@/app/index';
+import { RootStackParamList } from '@/App';
 
 export default function SplashScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleStart = () => {
-    console.log('Button Start');
     navigation.navigate('DriveManually');
   };
 

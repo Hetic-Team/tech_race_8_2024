@@ -1,13 +1,13 @@
-import {Colors} from '@/constants/Colors';
+
 import React, {useEffect} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {Provider} from '@react-native-material/core';
+// import {Provider} from '@react-native-material/core';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '@/app/index';
+
 import {
   SafeAreaView,
   StyleSheet,
@@ -21,8 +21,11 @@ import {
 
 // import JoystickSecond from "../components/JoystickSecond";
 // import SettingsPopup from "@/popups/SettingsPopup";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {JoystickPad} from '../components/JoystickPad';
-import {JoystickCamera} from '../components/JoystickCamera';
+import {JoystickPadTwo} from '../components/JoystickPadTwo';
+import { RootStackParamList } from '@/App';
+// import {JoystickCamera} from '../components/JoystickCamera';
 
 export default function DriveManually() {
   const navigation =
@@ -42,18 +45,20 @@ export default function DriveManually() {
   }, []);
 
   return (
-    <Provider>
+    // <Provider>
       <SafeAreaView style={styles.container}>
         <View style={styles.joystick}>
-          <JoystickPad />
+        <GestureHandlerRootView>
+          <JoystickPadTwo />
+          </GestureHandlerRootView>
         </View>
-        <View style={styles.joystickCamera}>
+        {/* <View style={styles.joystickCamera}>
           <JoystickCamera />
         </View>
 
-        <SettingsPopup />
+        <SettingsPopup /> */}
       </SafeAreaView>
-    </Provider>
+    // </Provider>
   );
 }
 
