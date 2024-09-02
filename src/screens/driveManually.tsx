@@ -18,9 +18,8 @@ import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 // import JoystickSecond from "../components/JoystickSecond";
 // import SettingsPopup from "@/popups/SettingsPopup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import {JoystickPad} from '../components/JoystickPad';
+//import {JoystickPad} from '../components/JoystickPad';
 import {JoystickPadTwo} from '../components/JoystickPadTwo';
-import { RootStackParamList } from '../..//App';
 // import {JoystickCamera} from '../components/JoystickCamera';
 
 export default function DriveManually() {
@@ -30,7 +29,7 @@ export default function DriveManually() {
   return (
     // <Provider>
       <SafeAreaView style={styles.container}>
-        <View style={styles.joystick}>
+        <View>
         <GestureHandlerRootView>
           <JoystickPadTwo />
           </GestureHandlerRootView>
