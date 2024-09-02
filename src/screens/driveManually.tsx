@@ -1,3 +1,4 @@
+import { WebView } from 'react-native-webview';
 import { Colors } from '../constants/Colors';
 
 import React, {useEffect} from 'react';
@@ -5,79 +6,85 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-// import {Provider} from '@react-native-material/core';
 import {useNavigation} from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
-
-
-
-// import { Joystick } from "@/components/Joystick";
-
-// import JoystickSecond from "../components/JoystickSecond";
-// import SettingsPopup from "@/popups/SettingsPopup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-//import {JoystickPad} from '../components/JoystickPad';
 import {JoystickPadTwo} from '../components/JoystickPadTwo';
-// import {JoystickCamera} from '../components/JoystickCamera';
 
-export default function DriveManually() {
 
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+const HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joystick Control</title>
+    <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.8.1/dist/nipplejs.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .camera-feed {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            border: none;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="camera-feed">
+        <iframe src="https://blog.logrocket.com/" title="Camera Feed"></iframe>
+    </div>
+</body>
+</html>
+`;
 
+export default function App() {
   return (
-    // <Provider>
-      <SafeAreaView style={styles.container}>
-        <View>
-        <GestureHandlerRootView>
-          <JoystickPadTwo />
-          </GestureHandlerRootView>
-        </View>
-        {/* <View style={styles.joystickCamera}>
-          <JoystickCamera />
-        </View>
-
-        <SettingsPopup /> */}
-      </SafeAreaView>
-    // </Provider>
+    <View style={styles.container}>
+      <WebView
+        originWhitelist={['*']}
+        source={{ html: HTML }}
+        style={styles.webview}
+      />
+     <GestureHandlerRootView style={styles.joystickContainer}>
+        <JoystickPadTwo />
+      </GestureHandlerRootView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    text: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: Colors.light.text,
-    },
-    buttonStart: {
-        fontSize: hp(3),
-        backgroundColor: Colors.light.background,
-        textAlign: 'center',
-        textAlignVertical: 'center',
-        height: hp(7),
-        width: wp(80),
-        borderRadius: 8,
-        margin: hp(3),
-        color: 'white',
-        
-    },
-    scrollContentContainer: {
-        alignItems: 'center',
-        paddingBottom: 60,
-    },
-    box: {
-        height: 100,
-        width: 100,
-        borderRadius: 5,
-        marginVertical: 40,
-        backgroundColor: '#61dafb',
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
+  container: {
+    flex: 1,
+    position: 'relative', // Important for absolute positioning of children
+  },
+  webview: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  joystickContainer: {
+    position: 'absolute',
+    bottom: 20, 
+    left: 20,   
+    width: 150,
+    height: 150, 
+    zIndex: 1,  
+  },
 });

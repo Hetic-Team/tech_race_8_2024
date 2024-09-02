@@ -47,8 +47,9 @@ export const JoystickPadTwo = () => {
   // };
 
   const sendPayload = (payload) => {
-
+    console.log('sdsd')
     if (ws) {
+      console.log(JSON.stringify(payload))
       ws.send(JSON.stringify(payload));
       setMessages(prevMessages => [...prevMessages, `You: ${JSON.stringify(payload)}`]);
     }
@@ -84,18 +85,18 @@ export const JoystickPadTwo = () => {
   const handleButtonPress = (e) => {
     const direction = getJoystickDirection(e.angle.degree)
     console.log(direction);
-    // if(e.type == "stop") sendDirectionToAPI(0);
-    // else if (e.direction == "FORWARD") sendDirectionToAPI(1);
-    // else if (e.direction == "RIGHT") sendDirectionToAPI(4);
-    // else if (e.direction == "LEFT") sendDirectionToAPI(3);
-    // else if (e.direction == "BACKWARD") sendDirectionToAPI(2);
-    // else sendDirectionToAPI(0);
+    if(e.type == "stop") sendDirectionToAPI(0);
+    else if (direction == "Upward") sendDirectionToAPI(1);
+    else if (direction == "Right") sendDirectionToAPI(4);
+    else if (direction == "Left") sendDirectionToAPI(3);
+    else if (direction == "Downward") sendDirectionToAPI(2);
+    else sendDirectionToAPI(0);
 
     };
     // sendDirectionToAPI(type);
 
   return (
-    <KorolJoystick color="#06b6d4" radius={75} onMove={handleButtonPress} />
+    <KorolJoystick radius={75} onMove={handleButtonPress} />
   );
 };
 
@@ -126,6 +127,9 @@ const styles = StyleSheet.create({
   },
   arrowText: {
     fontSize: 10,
+  },
+  joystick: {
+    backgroundColor: 'rgba(0, 0, 0, 0)', // Transparent background for joystick
   },
 });
 
