@@ -1,39 +1,49 @@
 import { Colors } from '../constants/Colors';
-import React from 'react';
+
+import React, {useEffect} from 'react';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { useNavigation } from '@react-navigation/native';
+// import {Provider} from '@react-native-material/core';
+import {useNavigation} from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 
 
+
+// import { Joystick } from "@/components/Joystick";
+
+// import JoystickSecond from "../components/JoystickSecond";
+// import SettingsPopup from "@/popups/SettingsPopup";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {JoystickPad} from '../components/JoystickPad';
+import {JoystickPadTwo} from '../components/JoystickPadTwo';
+import { RootStackParamList } from '../..//App';
+// import {JoystickCamera} from '../components/JoystickCamera';
+
 export default function DriveManually() {
 
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-    const handleStart = () => {
-      console.log("Button Start")
-      navigation.navigate('Login');
-    };
-    
-    return (
-        //<SafeAreaView style={styles.container}>
-          //<ScrollView style={styles.scrollContentContainer}>
-            <View style={[
-            styles.box,
-            {
-                transform: [{skewX: '-45deg'}, {skewY: '45deg'}],
-            },
-           ]}>
-                <Text style={styles.text}>Welcome to the Drive Manually Screen!</Text>
-            </View>
-          //</ScrollView>
-        //</SafeAreaView>
-    );
-};
+  return (
+    // <Provider>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.joystick}>
+        <GestureHandlerRootView>
+          <JoystickPadTwo />
+          </GestureHandlerRootView>
+        </View>
+        {/* <View style={styles.joystickCamera}>
+          <JoystickCamera />
+        </View>
+
+        <SettingsPopup /> */}
+      </SafeAreaView>
+    // </Provider>
+  );
+}
 
 const styles = StyleSheet.create({
     container: {

@@ -1,8 +1,8 @@
 // import { Joystick } from 'react-joystick-component';
 // import React, { useState, useEffect } from 'react';
 // import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-// import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload} from '@/services/MovementService';
-// import { BASE_URL } from '@/constants/Urls';
+// import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload} from '../services/MovementService';
+// import { BASE_URL } from '../constants/Urls';
 
 // export const JoystickPad = () => {
 //   const [ws, setWs] = useState<WebSocket | null>(null);
