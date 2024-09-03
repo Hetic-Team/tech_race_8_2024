@@ -7,38 +7,85 @@ export const getStopPayload = () => {
   };
   return command;
 };
-export const getForwardsPayload = () => {
+// @ts-ignore
+export const getForwardsPayload = (speed) => {
   const command = {
     cmd: 1,
-    data: [2000, 2000, 2000, 2000],
+    data: [speed, speed, speed, speed],
   };
   return command;
 };
 
-export const getBackwardsPayload = () => {
+// @ts-ignore
+export const getBackwardsPayload = (speed) => {
   const command = {
     cmd: 1,
-    data: [-2000, -2000, -2000, -2000],
+    data: [-speed, -speed, -speed, -speed],
   };
   return command;
 };
 
-export const getLeftPayload = () => {
+// @ts-ignore
+export const getLeftPayload = (speed) => {
   const command = {
     cmd: 1,
-    data: [200, 200, 2000, 2000],
+    data: [0, 0, speed, speed],
   };
   return command;
 };
 
-export const getRightPayload = () => {
+// @ts-ignore
+export const getRightPayload = (speed) => {
   const command = {
     cmd: 1,
-    data: [2000, 2000, 200, 200],
+    data: [speed, speed, 0, 0],
   };
   return command;
 
 };
+// @ts-ignore
+export const getUpRightPayload = (speed) => {
+  const command = {
+    cmd: 1,
+    data: [speed, speed, speed/2, speed/2],
+  };
+  return command;
+
+};
+// @ts-ignore
+export const getDownRightPayload = (speed) => {
+  const command = {
+    cmd: 1,
+    data: [-speed, speed, 0, 0],
+  };
+  return command;
+
+};
+// @ts-ignore
+export const getUpLeftPayload = (speed) => {
+  const command = {
+    cmd: 1,
+    data: [0,0,speed,speed],
+  };
+  return command;
+
+};
+// @ts-ignore
+export const getDownLeftPayload = (speed) => {
+  const command = {
+    cmd: 1,
+    data: [0, 0, -speed, -speed],
+  };
+  return command;
+
+};
+export const getCameraOnPayload = () => {
+  const command = {
+ "cmd": 9,
+          "data": 1
+  }
+  return command;
+}
 /**
  * Get the payload for the camera movement command
  * @param {Number} x 
