@@ -12,6 +12,7 @@ import { RootStackParamList } from '../../App';
 import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {JoystickPadTwo} from '../components/JoystickPadTwo';
+import ArrowPad from '../components/ArrowPad';
 
 
 const HTML = `<!DOCTYPE html>
@@ -62,7 +63,7 @@ export default function App() {
         style={styles.webview}
       />
      <GestureHandlerRootView style={styles.joystickContainer}>
-        <JoystickPadTwo />
+        <ArrowPad />
       </GestureHandlerRootView>
     </View>
   );
