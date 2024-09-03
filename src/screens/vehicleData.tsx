@@ -91,15 +91,15 @@ export default function VehicleData() {
             </PressableButton>
         </View>
         <View style={styles.container}>
-        <Text style={styles.title}>Statistiques</Text>
-        <Text style={styles.subTitle}>Nombre d'évènements par parcours</Text>
-        <Text style={[styles.subTitle,styles.lastSubTitleLine]}>Seul les 6 derniers parcours sont prises en compte</Text>
+        <Text style={styles.title}>Trips Statistics</Text>
+        <Text style={styles.subTitle}>Events by trip</Text>
+        <Text style={[styles.subTitle,styles.lastSubTitleLine]}>Only the 6 last trips are accounted</Text>
 
         {isLoading ? (<ActivityIndicator />) : (
 
           <View style={styles.chartsContainer}>
             <View>
-                <Text style={styles.text}>Nombre d'obstacles sur le chemin: </Text>
+                <Text style={styles.text}>Number of obstacles paving the way: </Text>
                 <BarChart data = {collisionsDatas} 
                 capColor={'rgba(78, 0, 142)'}
                 barWidth={25}
@@ -112,11 +112,11 @@ export default function VehicleData() {
                 noOfSections={3}
                 isAnimated
                 frontColor={'rgba(219, 182, 249,0.2)'}/>   
-                <Text style={styles.subTitle}>x: numéros des parcours </Text>
-                <Text style={styles.subTitle}>y: nombre d'obstacles rencontrés </Text>   
+                <Text style={styles.subTitle}>x: id of each trip </Text>
+                <Text style={styles.subTitle}>y: amount of obstacles</Text>   
             </View>   
             <View>
-                <Text style={styles.text}>Durées des parcours: </Text>
+                <Text style={styles.text}>Trips duration: </Text>
                 <BarChart data = {courseDurations} 
                 isAnimated
                 capColor={'rgba(78, 0, 142)'}
@@ -128,13 +128,13 @@ export default function VehicleData() {
                 yAxisThickness={0} 
                 xAxisThickness={4} 
                 frontColor={'rgba(219, 182, 249,0.2)'}/>   
-                <Text style={styles.subTitle}>x: numéros des parcours </Text>
-                <Text style={styles.subTitle}>y: durées des parcours </Text>   
+                <Text style={styles.subTitle}>x: id of each trip </Text>
+                <Text style={styles.subTitle}>y: duration of each trip (seconds)</Text>   
             </View>   
             <View>
-                <Text style={styles.text}>Sorties de ligne droite par parcours: </Text>
-                <Text style={styles.subTitle}>x: étendue de la dérive vers la gauche ou la droite </Text>
-                <Text style={styles.subTitle}>y: numéros des parcours </Text>   
+                <Text style={styles.text}>Drift from the line by trip: </Text>
+                <Text style={styles.subTitle}>x: extent of the drift to the left or right </Text>
+                <Text style={styles.subTitle}>y: id of each trip </Text>   
                 <PopulationPyramid data = {deriveLeft} showValuesAsBarLabels showSurplus width={300} />   
             </View> 
           </View>

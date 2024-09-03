@@ -31,7 +31,7 @@ export default function MoreInfo() {
       <PressableButton css={{backgroundColor:Colors.light.primaryGreen, position:'absolute', top:20, left: wp(10), alignSelf: 'flex-start'}} onPress={() => navigation.goBack()} >
         <CircleArrowLeft color={"#fff"}/>
       </PressableButton>
-      <Button label="Mes statistiques" onClick={handleVehicleData} />
+      <Button label="Vehicle Trips Data" onClick={handleVehicleData} />
       <Button label="Sessions Logs" onClick={handleSessionLog} />
     </View>
   );
