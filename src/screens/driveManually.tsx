@@ -24,7 +24,6 @@ const HTML = `<!DOCTYPE html>
     <style>
         body {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             color: white;
@@ -32,24 +31,11 @@ const HTML = `<!DOCTYPE html>
             margin: 0;
             overflow: hidden;
         }
-        .camera-feed {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-            border: none;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+       
     </style>
 </head>
 <body>
-    <div class="camera-feed">
-        <iframe src="https://blog.logrocket.com/" title="Camera Feed"></iframe>
-    </div>
+    <iframe src="http://192.168.87.10:7000/" title="Camera Feed" height="350" width="800"></iframe>  
 </body>
 </html>
 `;
