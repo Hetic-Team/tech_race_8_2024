@@ -1,4 +1,4 @@
-package com.tech_race_8_2024
+package com.awesomeproject
 
 import android.app.Application
 import com.facebook.react.PackageList
