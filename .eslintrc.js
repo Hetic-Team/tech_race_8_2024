@@ -1,7 +1,4 @@
-module.exports = {
-  extends: "react-app",
-  plugins: ["prettier"],
-  rules: {
-    "prettier/prettier": "error"
-  }
-};
+//module.exports = {
+  //root: true,
+  //extends: '@react-native',
+//};
