@@ -83,7 +83,10 @@ export default function VehicleData() {
   return (
     <ScrollView>
         <View style={styles.navigationBar}>
-          <PressableButton maxWidth={30} bgColor={Colors.light.primaryGreen} onPress={() => navigation.goBack()} >
+          <PressableButton 
+              css={{backgroundColor:Colors.light.primaryGreen, maxWidth: 30}}
+              onPress={() => navigation.goBack()}
+              >
               <CircleArrowLeft color={"#fff"}/>
             </PressableButton>
         </View>
@@ -106,6 +109,8 @@ export default function VehicleData() {
                 gradientColor={'rgba(200, 100, 244,0.8)'}
                 yAxisThickness={0} 
                 xAxisThickness={4} 
+                noOfSections={3}
+                isAnimated
                 frontColor={'rgba(219, 182, 249,0.2)'}/>   
                 <Text style={styles.subTitle}>x: numéros des parcours </Text>
                 <Text style={styles.subTitle}>y: nombre d'obstacles rencontrés </Text>   
@@ -113,6 +118,7 @@ export default function VehicleData() {
             <View>
                 <Text style={styles.text}>Durées des parcours: </Text>
                 <BarChart data = {courseDurations} 
+                isAnimated
                 capColor={'rgba(78, 0, 142)'}
                 barWidth={25}
                 capThickness={7}
