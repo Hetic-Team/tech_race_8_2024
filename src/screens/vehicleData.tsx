@@ -1,13 +1,12 @@
 import {Colors} from '../constants/Colors';
 import React,  {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ActivityIndicator, FlatList,   ScrollView} from 'react-native';
+import {CircleArrowLeft} from 'lucide-react-native';
+import {View, Text, StyleSheet, ActivityIndicator, ScrollView, Button} from 'react-native';
 import { BarChart, LineChart, PieChart, PopulationPyramid } from "react-native-gifted-charts";
+import { useNavigation } from '@react-navigation/native';
 
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-
+// internal components
+import PressableButton from '../components/PressableButton'
 export interface RaceDatas {
   id: number
   start_time: string
@@ -36,18 +35,20 @@ export interface Track {
 }
 
 type ChartValue = {value: number, label: string, frontColor: string}
+type PyramidValue = {left: number, right:number, yAxisLabel: string}
 
 
 export default function VehicleData() {
 
+  const navigation = useNavigation();
+
     const [isLoading, setLoading] = useState(true);
     const [telemetry, setTelemetry] = useState<RaceDatas[]>([]);
-  
-    const getMovies = async () => {
+    // http://192.168.87.82 - ip de Justin avec son partage co sur Android
+    const getTelemetry = async () => {
       try {
-        const response = await fetch('http://192.168.87.82:9000/sessions/info');
+        const response = await fetch('http://10.0.2.2:9000/sessions/info');
         const json = await response.json();
-        console.log(json)
         setTelemetry(json);
       } catch (error) {
         console.error(error);
@@ -57,55 +58,80 @@ export default function VehicleData() {
     };
   
     useEffect(() => {
-      getMovies();
+      getTelemetry() 
     }, []);
 
-    console.log(telemetry)
+    const itemCounter = (array: Array<number>, item: Array<number>) => array.flat(Infinity).filter(currentItem => item.includes(currentItem)).length;
 
     let collisionNumber: ChartValue[] = []
+    let courseDurations: ChartValue[] = []
+    let deriveLeft: PyramidValue[] = []
 
-    telemetry.map((telemetryData, index) => {
-      if(index > (telemetry.length - 6)) {
+    const stats = telemetry.filter(item => item.collisions[0].count > 0 && item.tracks[0].count > 0)
+
+
+    stats.map((telemetryData, index) => {
+      if(index > (stats.length - 6)) {
         collisionNumber.push({value: telemetryData.collisions[0].count, frontColor: "#177AD5", label: telemetryData.id.toString()})
+        courseDurations.push({value: parseInt(telemetryData.duration), frontColor: "#FF9F1C", label: telemetryData.id.toString()})
+        deriveLeft.push({left: itemCounter(telemetryData.tracks[0].line_tracking_values, [6,3]), right: itemCounter(telemetryData.tracks[0].line_tracking_values, [4,2]), yAxisLabel:telemetryData.id.toString()})
       }
     })
-   
+    console.log(deriveLeft)
     const collisionsDatas = [...collisionNumber]
-    console.log(collisionsDatas)
+    
   return (
     <ScrollView>
+        <View style={styles.navigationBar}>
+          <PressableButton maxWidth={30} bgColor={Colors.light.primaryGreen} onPress={() => navigation.goBack()} >
+              <CircleArrowLeft color={"#fff"}/>
+            </PressableButton>
+        </View>
         <View style={styles.container}>
         <Text style={styles.title}>Statistiques</Text>
-        <Text style={styles.subTitle}>Nombre d'évènements par courses</Text>
-        <Text style={[styles.subTitle,styles.lastSubTitleLine]}>Seul les 6 dernières courses sont prises en compte</Text>
+        <Text style={styles.subTitle}>Nombre d'évènements par parcours</Text>
+        <Text style={[styles.subTitle,styles.lastSubTitleLine]}>Seul les 6 derniers parcours sont prises en compte</Text>
 
         {isLoading ? (<ActivityIndicator />) : (
 
-          <>
-              <Text style={styles.text}>Nombre d'obstacles sur le chemin: </Text>
-              <BarChart data = {collisionsDatas} 
-              barBorderRadius={4} 
-              capColor={'rgba(78, 0, 142)'}
-              barWidth={25}
-              capThickness={7}
-              cappedBars
-              showGradient
-              gradientColor={'rgba(200, 100, 244,0.8)'}
-              yAxisThickness={0} 
-              xAxisThickness={4} 
-              frontColor={'rgba(219, 182, 249,0.2)'}/>   
-              <Text style={styles.subTitle}>x: numéros des courses </Text>
-              <Text style={styles.subTitle}>y: nombre d'obstacles rencontrés </Text>       
-          </>
-
-
-
-
-
-
-
-
-
+          <View style={styles.chartsContainer}>
+            <View>
+                <Text style={styles.text}>Nombre d'obstacles sur le chemin: </Text>
+                <BarChart data = {collisionsDatas} 
+                capColor={'rgba(78, 0, 142)'}
+                barWidth={25}
+                capThickness={7}
+                cappedBars
+                showGradient
+                gradientColor={'rgba(200, 100, 244,0.8)'}
+                yAxisThickness={0} 
+                xAxisThickness={4} 
+                frontColor={'rgba(219, 182, 249,0.2)'}/>   
+                <Text style={styles.subTitle}>x: numéros des parcours </Text>
+                <Text style={styles.subTitle}>y: nombre d'obstacles rencontrés </Text>   
+            </View>   
+            <View>
+                <Text style={styles.text}>Durées des parcours: </Text>
+                <BarChart data = {courseDurations} 
+                capColor={'rgba(78, 0, 142)'}
+                barWidth={25}
+                capThickness={7}
+                cappedBars
+                showGradient
+                gradientColor={'rgba(200, 100, 244,0.8)'}
+                yAxisThickness={0} 
+                xAxisThickness={4} 
+                frontColor={'rgba(219, 182, 249,0.2)'}/>   
+                <Text style={styles.subTitle}>x: numéros des parcours </Text>
+                <Text style={styles.subTitle}>y: durées des parcours </Text>   
+            </View>   
+            <View>
+                <Text style={styles.text}>Sorties de ligne droite par parcours: </Text>
+                <Text style={styles.subTitle}>x: étendue de la dérive vers la gauche ou la droite </Text>
+                <Text style={styles.subTitle}>y: numéros des parcours </Text>   
+                <PopulationPyramid data = {deriveLeft} showValuesAsBarLabels showSurplus width={300} />   
+            </View> 
+          </View>
 
         )}
 
@@ -116,10 +142,18 @@ export default function VehicleData() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 30,
+  navigationBar: {
+    marginTop: 20,
     paddingHorizontal: 20,
     flex: 1,
+  },
+  container: {
+    marginTop: 10,
+    paddingHorizontal: 20,
+    flex: 1,
+  },
+  chartsContainer: {
+    rowGap: 20
   },
   title: {
     marginTop: 30,
