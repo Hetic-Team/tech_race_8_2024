@@ -11,29 +11,33 @@ export const JoystickPadTwo = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const socket = new WebSocket(`ws://${BASE_URL}/ws`);
-    console.log("Bae URL", BASE_URL)
-    socket.onopen = () => {
-      console.log('WebSocket connection opened');
-      setWs(socket);
-    };
+    try {
+      const socket = new WebSocket(`ws://${BASE_URL}/ws`);
+      console.log("Bae URL", BASE_URL)
+      socket.onopen = () => {
+        console.log('WebSocket connection opened');
+        setWs(socket);
+      };
 
-    socket.onmessage = (event) => {
-      console.log('Received:', event.data);
-      setMessages(prevMessages => [...prevMessages, event.data]);
-    };
+      socket.onmessage = (event) => {
+        console.log('Received:', event.data);
+        setMessages(prevMessages => [...prevMessages, event.data]);
+      };
 
-    socket.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
+      socket.onclose = () => {
+        console.log('WebSocket connection closed');
+      };
 
-    socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+      socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
 
-    return () => {
-      socket.close();
-    };
+      return () => {
+        socket.close();
+      };
+    }catch(error) {
+      console.log('Error connecting to WebSocket:', error);
+    }
   }, []);
 
   // const [input, setInput] = useState('');
