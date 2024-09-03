@@ -1,6 +1,6 @@
 import {Colors} from '../constants/Colors';
 import React,  {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ActivityIndicator, FlatList} from 'react-native';
+import {View, Text, StyleSheet, ActivityIndicator, FlatList,   ScrollView} from 'react-native';
 import { BarChart, LineChart, PieChart, PopulationPyramid } from "react-native-gifted-charts";
 
 import {
@@ -17,7 +17,7 @@ export interface RaceDatas {
   videos: Videos
   collisions: Collision[]
   tracks: Track[]
-}
+} 
 
 export interface Videos {
   video_urls: any[]
@@ -35,19 +35,20 @@ export interface Track {
   timestamps: string[]
 }
 
+type ChartValue = {value: number, label: string, frontColor: string}
 
 
 export default function VehicleData() {
 
     const [isLoading, setLoading] = useState(true);
-    const [data, setData] = useState<RaceDatas[]>([]);
+    const [telemetry, setTelemetry] = useState<RaceDatas[]>([]);
   
     const getMovies = async () => {
       try {
         const response = await fetch('http://192.168.87.82:9000/sessions/info');
         const json = await response.json();
         console.log(json)
-        setData(json);
+        setTelemetry(json);
       } catch (error) {
         console.error(error);
       } finally {
@@ -59,56 +60,87 @@ export default function VehicleData() {
       getMovies();
     }, []);
 
-    console.log(data)
+    console.log(telemetry)
 
-    const datas=[ {value:50}, {value:80}, {value:90}, {value:70} ]
-  
+    let collisionNumber: ChartValue[] = []
+
+    telemetry.map((telemetryData, index) => {
+      if(index > (telemetry.length - 6)) {
+        collisionNumber.push({value: telemetryData.collisions[0].count, frontColor: "#177AD5", label: telemetryData.id.toString()})
+      }
+    })
+   
+    const collisionsDatas = [...collisionNumber]
+    console.log(collisionsDatas)
   return (
-    <View style={styles.container}>
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <FlatList
-            data={data}
-            keyExtractor={({id}) => id.toString()}
-            renderItem={({item}) => (
-              <Text>
-                Durée: {item.duration}
-              </Text>
-            )}
-          />
+    <ScrollView>
+        <View style={styles.container}>
+        <Text style={styles.title}>Statistiques</Text>
+        <Text style={styles.subTitle}>Nombre d'évènements par courses</Text>
+        <Text style={[styles.subTitle,styles.lastSubTitleLine]}>Seul les 6 dernières courses sont prises en compte</Text>
+
+        {isLoading ? (<ActivityIndicator />) : (
+
+          <>
+              <Text style={styles.text}>Nombre d'obstacles sur le chemin: </Text>
+              <BarChart data = {collisionsDatas} 
+              barBorderRadius={4} 
+              capColor={'rgba(78, 0, 142)'}
+              barWidth={25}
+              capThickness={7}
+              cappedBars
+              showGradient
+              gradientColor={'rgba(200, 100, 244,0.8)'}
+              yAxisThickness={0} 
+              xAxisThickness={4} 
+              frontColor={'rgba(219, 182, 249,0.2)'}/>   
+              <Text style={styles.subTitle}>x: numéros des courses </Text>
+              <Text style={styles.subTitle}>y: nombre d'obstacles rencontrés </Text>       
+          </>
+
+
+
+
+
+
+
+
+
+
         )}
 
-
-    
-      <LineChart data = {datas} />
-   
-      <LineChart data = {datas} areaChart />
-
-      </View>
+        </View>
+      </ScrollView>
   );
+  
 }
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 30,
+    paddingHorizontal: 20,
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  text: {
-    fontSize: 20,
+  title: {
+    marginTop: 30,
+    fontSize: 30,
     fontWeight: 'bold',
     color: Colors.light.text,
   },
-  buttonStart: {
-    fontSize: hp(3),
-    backgroundColor: Colors.light.background,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    height: hp(7),
-    width: wp(80),
-    borderRadius: 8,
-    margin: hp(3),
-    color: 'white',
+  subTitle: {
+    fontSize: 16,
+    fontWeight: 'normal',
+    fontStyle: 'italic',
+    color: Colors.light.text,
+  },
+  lastSubTitleLine: {
+    marginBottom: 20,
+  },
+  text: {
+    marginBottom: 10,
+    marginTop: 10,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.light.text,
   },
 });
