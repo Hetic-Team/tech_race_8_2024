@@ -13,6 +13,8 @@ import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {JoystickPadTwo} from '../components/JoystickPadTwo';
 import ArrowPad from '../components/ArrowPad';
+import JoystickPad from '../components/JoystickPad';
+import JoystickCamera from '../components/JoystickCamera';
 
 
 const HTML = `<!DOCTYPE html>
@@ -57,14 +59,18 @@ const HTML = `<!DOCTYPE html>
 export default function App() {
   return (
     <View style={styles.container}>
+       <View style={styles.joystickCameraContainer}>
+       <JoystickCamera/>
+     </View>
+
       <WebView
         originWhitelist={['*']}
         source={{ html: HTML }}
         style={styles.webview}
       />
-     <GestureHandlerRootView style={styles.joystickContainer}>
-        <ArrowPad />
-      </GestureHandlerRootView>
+    <View style={styles.joystickContainer}>
+        <JoystickPad />
+     </View>
     </View>
   );
 }
@@ -85,6 +91,18 @@ const styles = StyleSheet.create({
     left: 20,   
     width: 150,
     height: 150, 
-    zIndex: 1,  
+    zIndex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  joystickCameraContainer: {
+    position: 'absolute',
+    bottom: 20, 
+    right: 20,   
+    width: 150,
+    height: 150, 
+    zIndex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

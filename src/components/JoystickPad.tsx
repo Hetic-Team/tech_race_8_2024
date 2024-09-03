@@ -1,28 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Animated, PanResponder, StyleSheet } from 'react-native';
-import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload } from '../services/MovementService';
+import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload, getCameraOnPayload, getUpLeftPayload, getUpRightPayload, getDownLeftPayload, getDownRightPayload } from '../services/MovementService';
 import { BASE_URL } from '../constants/Urls';
 
 const JoystickPad: React.FC = () => {
     const wsRef = useRef<WebSocket | null>(null);
   const pan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;  const [throttleTimeout, setThrottleTimeout] = useState<NodeJS.Timeout | null>(null);
-  const throttleDelay = 1000;
+  const throttleDelay = 400;
 
   useEffect(() => {           
     const socket = new WebSocket(`ws://${BASE_URL}/ws`);
-    console.log("BASE URL", BASE_URL);
+    // console.log("BASE URL", BASE_URL);
 
     socket.onopen = () => {
-        console.log('WebSocket connection opened');
+        // console.log('WebSocket connection opened');
         wsRef.current = socket;
+        cameraOn();
     };
 
     socket.onmessage = (event) => {
-        console.log('Received:', event.data);
+        // console.log('Received:', event.data);
     };
 
     socket.onclose = () => {
-        console.log('WebSocket connection closed');
+        // console.log('WebSocket connection closed');
     };
 
     socket.onerror = (error) => {
@@ -32,85 +33,58 @@ const JoystickPad: React.FC = () => {
     return () => {
         socket.close();
     };
-}, []);
-
-const sendPayload = (payload: any) => {
+  }, []);
+    /**
+     * Get the payload for the camera to turn on
+     */
+const cameraOn = () => {
+        const cameraCommandOn = getCameraOnPayload();
+    sendPayload(cameraCommandOn);
+    
+}
+    /**
+     * Send payload to the API
+     * @param payload 
+     */
+    const sendPayload = (payload: any) => {
+    console.log("Sending payload:", JSON.stringify(payload));
     const currentWs = wsRef.current;
     if (currentWs) {
-        console.log("Sending payload:", JSON.stringify(payload));
-        // currentWs.send(JSON.stringify(payload));
+        currentWs.send(JSON.stringify(payload));
     }
 };
-
+  
+/**
+ * Send the direction to the API
+ * @param direction 
+ * @param speed 
+ * @returns 
+ */
   const sendDirectionToAPI = (direction: string, speed: number) => {
-    let payload: any;
+      console.log("Direction and Speed :", direction , " and ", speed);
     switch (direction) {
       case 'up':
-        payload = {
-          cmd: 1,
-          data: [speed, speed, speed, speed] // All wheels move forward
-        };
-        break;
+        return getForwardsPayload(speed);
       case 'down':
-        payload = {
-          cmd: 1,
-          data: [-speed, -speed, -speed, -speed] // All wheels move backward
-        };
-        break;
+       return getBackwardsPayload(speed);
       case 'left':
-        payload = {
-          cmd: 1,
-          data: [-speed, speed, -speed, speed] // Example values for left turn, adjust as needed
-        };
-        break;
+        return getLeftPayload(speed);
       case 'right':
-        payload = {
-          cmd: 1,
-          data: [speed, -speed, speed, -speed] // Example values for right turn, adjust as needed
-        };
-        break;
+        return getRightPayload(speed);
       case 'up-left':
-        payload = {
-          cmd: 1,
-          data: [-speed, speed, -speed, speed] // Example values for up-left, adjust as needed
-        };
-        break;
+      return getUpLeftPayload(speed);
       case 'up-right':
-        payload = {
-          cmd: 1,
-          data: [speed, -speed, speed, -speed] // Example values for up-right, adjust as needed
-        };
-        break;
+        return getUpRightPayload(speed);
       case 'down-left':
-        payload = {
-          cmd: 1,
-          data: [-speed, speed, -speed, speed] // Example values for down-left, adjust as needed
-        };
-        break;
+        return getDownLeftPayload(speed);
       case 'down-right':
-        payload = {
-          cmd: 1,
-          data: [speed, -speed, speed, -speed] // Example values for down-right, adjust as needed
-        };
-        break;
-      case 'stop':
+       return getDownRightPayload(speed);
+        case 'stop':
+            return getStopPayload();
       default:
-        payload = {
-          cmd: 1,
-          data: [0, 0, 0, 0] // Stop all wheels
-        };
-        break;
+       return getStopPayload();
     }
-      sendPayload(payload);
-    // Send the prepared payload
-      // Throttle the sending of payload
-//    if (throttleTimeout) {
-//     clearTimeout(throttleTimeout);
-//   }
-//       setThrottleTimeout(setTimeout(() => {
-//         // console.log("bef",payload)
-//     sendPayload(payload);
-//   }, throttleDelay));
+  
   };
 
 
@@ -120,7 +94,7 @@ const sendPayload = (payload: any) => {
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gestureState) => {
         let { dx, dy } = gestureState;
-        const maxDistance = 150; // Max joystick distance
+        const maxDistance = 100; // Max joystick distance
       
         // Limit dx and dy to remain within the joystick circle
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -131,27 +105,41 @@ const sendPayload = (payload: any) => {
         }
       
         const normalizedDistance = Math.min(distance, maxDistance) / maxDistance;
-        const speed = Math.round(normalizedDistance * 4095); // Calculate speed
+        const speed = Math.round(normalizedDistance * 1000); // Calculate speed
       
-        // Determine direction
+          // Determine direction
+        
         let direction = '';
-        if (dx > 0 && dy < 0) direction = 'up';
-        else if (dx > 0 && dy > 0) direction = 'down';
-        else if (dx < 0 && dy < 0) direction = 'up';
-        else if (dx < 0 && dy > 0) direction = 'down';
-        else if (dx > 0) direction = 'right';
-        else if (dx < 0) direction = 'left';
-        else if (dy > 0) direction = 'down';
-        else if (dy < 0) direction = 'up';
-      
-        sendDirectionToAPI(direction, speed);
+        if (dy < 0 && dx >= -45 && dx <= 45) direction = 'up'; // Up condition
+        else if (dy > 0 && dx >= -45 && dx <= 45) direction = 'down'; // Down condition
+        else if (dx > 0 && dy >= -45 && dy <= 45) direction = 'right'; // Right condition
+        else if (dx < 0 && dy >= -45 && dy <= 45) direction = 'left'; // Left condition
+        else if (dx > 0 && dy > 0) direction = 'down-right'; // Down-right diagonal
+        else if (dx > 0 && dy < 0) direction = 'up-right'; // Up-right diagonal
+        else if (dx < 0 && dy > 0) direction = 'down-left'; // Down-left diagonal
+        else if (dx < 0 && dy < 0) direction = 'up-left'; // Up-left diagonal
+          else direction = 'stop'; // Default stop direction
+
+          // getting payload
+              const payload = sendDirectionToAPI(direction, speed);
+              sendPayload(payload);
+       
+          // adjusting throttle of the joystick to prevent too many requests
+        //   if (throttleTimeout) {
+        //     clearTimeout(throttleTimeout);
+        //   }
+        //       setThrottleTimeout(setTimeout(() => {
+        //     sendPayload(payload);
+        //   }, throttleDelay));
       
         // Update joystick position
         pan.setValue({ x: dx, y: dy });
       },      
       onPanResponderRelease: () => {
         Animated.spring(pan, { toValue: { x: 0, y: 0 }, useNativeDriver: false }).start();
-        sendDirectionToAPI("stop", 0); // Arrêter le mouvement quand le joystick est relâché
+          const payload = sendDirectionToAPI("stop", 0);
+          sendPayload(payload);
+          // Arrêter le mouvement quand le joystick est relâché
       },
     })
   ).current;
