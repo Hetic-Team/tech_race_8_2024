@@ -26,16 +26,29 @@ const HTML = `<!DOCTYPE html>
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
             height: 100vh;
             margin: 0;
             overflow: hidden;
+            background-color: white; /* Ajout d'une couleur de fond si nécessaire */
         }
-       
+        .iframe-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            border: 2px solid green; /* Supprime les bordures de l'iframe si vous ne les voulez pas */
+            max-width: 100%;
+            max-height: 100%;
+        }
     </style>
 </head>
 <body>
-    <iframe src="http://192.168.87.10:7000/" title="Camera Feed" height="350" width="800"></iframe>  
+    <div class="iframe-container">
+        <iframe src="http://192.168.87.10:7000/" title="Camera Feed" height="296" width="400"></iframe>
+    </div>
 </body>
 </html>
 `;
