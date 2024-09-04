@@ -19,6 +19,7 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
+     "src/types/**/*.ts",
   ],
   "exclude": ["node_modules"]
 }

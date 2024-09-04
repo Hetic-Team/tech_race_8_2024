@@ -15,6 +15,7 @@ import {JoystickPadTwo} from '../components/JoystickPadTwo';
 import ArrowPad from '../components/ArrowPad';
 import JoystickPad from '../components/JoystickPad';
 import JoystickCamera from '../components/JoystickCamera';
+import VoiceControl from '../components/VoiceCommands';
 
 
 const HTML = `<!DOCTYPE html>
@@ -69,7 +70,8 @@ export default function App() {
         style={styles.webview}
       />
     <View style={styles.joystickContainer}>
-        <JoystickPad />
+        {/* <JoystickPad /> */}
+        <VoiceControl />
      </View>
     </View>
   );
@@ -87,20 +89,20 @@ const styles = StyleSheet.create({
   },
   joystickContainer: {
     position: 'absolute',
-    bottom: 20, 
-    left: 20,   
+    bottom: 20,
+    left: 20,
     width: 150,
-    height: 150, 
+    height: 150,
     zIndex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   joystickCameraContainer: {
     position: 'absolute',
-    bottom: 20, 
-    right: 20,   
+    bottom: 20,
+    right: 20,
     width: 150,
-    height: 150, 
+    height: 150,
     zIndex: 1,
     justifyContent: 'center',
     alignItems: 'center',

@@ -12,6 +12,7 @@
   "dependencies": {
     "@korsolutions/react-native-joystick": "^2.0.1",
     "@react-native-community/cli": "^13.6.9",
+    "@react-native-voice/voice": "^3.2.4",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.10.0",
     "@types/react-dom": "^18.3.0",
