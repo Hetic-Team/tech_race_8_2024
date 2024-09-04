@@ -2,7 +2,7 @@ import {Colors} from '../constants/Colors';
 import React,  {useEffect, useState} from 'react';
 import {CircleArrowLeft} from 'lucide-react-native';
 import {View, Text, StyleSheet, ActivityIndicator, ScrollView, Button} from 'react-native';
-import { BarChart, LineChart, PieChart, PopulationPyramid } from "react-native-gifted-charts";
+import { BarChart, PopulationPyramid } from "react-native-gifted-charts";
 import { useNavigation } from '@react-navigation/native';
 
 // internal components
