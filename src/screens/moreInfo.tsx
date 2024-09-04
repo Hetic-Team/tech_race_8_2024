@@ -6,9 +6,11 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useNavigation} from '@react-navigation/native';
+import {CircleArrowLeft} from 'lucide-react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import Button from '../components/Button';
+import PressableButton from '../components/PressableButton'
 
 export default function MoreInfo() {
   const navigation =
@@ -26,7 +28,10 @@ export default function MoreInfo() {
 
   return (
     <View style={styles.container}>
-      <Button label="Vehicle Data" onClick={handleVehicleData} />
+      <PressableButton css={{backgroundColor:Colors.light.primaryGreen, position:'absolute', top:20, left: wp(10), alignSelf: 'flex-start'}} onPress={() => navigation.goBack()} >
+        <CircleArrowLeft color={"#fff"}/>
+      </PressableButton>
+      <Button label="Vehicle Trips Data" onClick={handleVehicleData} />
       <Button label="Sessions Logs" onClick={handleSessionLog} />
     </View>
   );
