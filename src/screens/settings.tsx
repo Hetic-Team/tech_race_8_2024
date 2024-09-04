@@ -2,7 +2,7 @@ import {Colors} from '../constants/Colors';
 import React, { useEffect, useState } from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { IconArrowLeft } from '../components/Icons/IconArowLeft';
-import { IconLogout } from '../components/Icons/IconLogout';
+import { LogOut } from 'lucide-react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
@@ -91,7 +91,7 @@ export default function Setting() {
               </TouchableOpacity>
               <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                   <Text style={styles.logoutButtonText}>LOGOUT</Text>
-                  <IconLogout color="red" size={20}/>
+                  <LogOut color="red" size={20}/>
               </TouchableOpacity>
           </View>
 
