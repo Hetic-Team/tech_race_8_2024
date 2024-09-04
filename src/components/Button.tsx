@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import {TouchableOpacity, Text, StyleSheet, View} from 'react-native';
+import {Text, StyleSheet, View} from 'react-native';
 import {Colors} from '../constants/Colors';
 import {
   widthPercentageToDP as wp,

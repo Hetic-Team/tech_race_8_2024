@@ -3,14 +3,11 @@ import SplashScreen from './src/screens/splashScreen';
 import LoginScreen from './src/screens/login';
 import HomePage from './src/screens/homePage';
 import AutoDrive from './src/screens/autoDrive';
-import MoreInfo from './src/screens/moreInfo';
 import Setting from './src/screens/settings';
 import VehicleData from './src/screens/vehicleData';
-import SessionLog from './src/screens/sessionLog';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DriveManually from './src/screens/driveManually';
-
 
 export type RootStackParamList = {
   SplashScreen: undefined;
@@ -21,7 +18,6 @@ export type RootStackParamList = {
   MoreInfo: undefined;
   Setting: undefined;
   VehicleData: undefined;
-  SessionLog: undefined;
 };
 
 
@@ -36,12 +32,10 @@ export default function HomeScreen() {
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="HomePage" component={HomePage} />
-        <Stack.Screen name="MoreInfo" component={MoreInfo} />
+        <Stack.Screen name="MoreInfo" component={VehicleData} />
         <Stack.Screen name="DriveManually" component={DriveManually} />
         <Stack.Screen name="AutoDrive" component={AutoDrive} />
         <Stack.Screen name="Setting" component={Setting} />
-        <Stack.Screen name="VehicleData" component={VehicleData} />
-        <Stack.Screen name="SessionLog" component={SessionLog} />
       </Stack.Navigator>
     </NavigationContainer>
     

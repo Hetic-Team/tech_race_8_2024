@@ -42,11 +42,11 @@ export default function HomePage() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.vehicleIP}>Vehicle IP : {vehicleIP}</Text>
+      <Text style={styles.vehicleIP}>Vehicle Session id : {vehicleIP}</Text>
 
       <Button label="Drive Manually" onClick={handleDriveManually} />
       <Button label="Drive Auto" onClick={handleDriveAuto} />
-      <Button label="More Info" onClick={handleMoreInfo} />
+      <Button label="My statistics" onClick={handleMoreInfo} />
       <Button label="Settings" onClick={handleSetting} />
     </View>
   );

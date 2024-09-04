@@ -40,11 +40,11 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.titleLogin}>Tech Race Login</Text>
-      <Text style={styles.subtitleLogin}>Enter your vehicle infos.</Text>
+      <Text style={styles.subtitleLogin}>Enter your vehicle infos. You need a vehicle session id delivered by your supplier.</Text>
 
       <Input
-        label="Vehicle IP Address"
-        placeholder="Enter Vehicle IP Address"
+        label="Vehicle session id"
+        placeholder="Enter Vehicle session id"
         secureTextEntry={false}
         errorMessage={errorIP}
         value={vehicleIP}
