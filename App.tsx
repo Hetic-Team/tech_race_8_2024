@@ -8,7 +8,7 @@ import VehicleData from './src/screens/vehicleData';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DriveManually from './src/screens/driveManually';
-import RaceVideo from './src/screens/raceVideo';
+import RaceVideo from './src/screens/raceVideoList';
 
 export type RootStackParamList = {
   SplashScreen: undefined;

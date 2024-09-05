@@ -77,7 +77,7 @@ export default function VehicleData() {
         deriveLeft.push({left: itemCounter(telemetryData.tracks[0].line_tracking_values, [6,3]), right: itemCounter(telemetryData.tracks[0].line_tracking_values, [4,2]), yAxisLabel:telemetryData.id.toString()})
       }
     })
-    console.log(deriveLeft)
+
     const collisionsDatas = [...collisionNumber]
     
   return (
