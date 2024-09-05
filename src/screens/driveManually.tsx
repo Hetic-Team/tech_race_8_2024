@@ -1,18 +1,19 @@
 import { WebView } from 'react-native-webview';
 import { Colors } from '../constants/Colors';
-
 import React, {useEffect} from 'react';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
+    heightPercentageToDP,
 } from 'react-native-responsive-screen';
 import {useNavigation} from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, View, Dimensions} from 'react-native';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {JoystickPadTwo} from '../components/JoystickPadTwo';
 import ArrowPad from '../components/ArrowPad';
+import ActionHelper from '../services/ActionHelper';
 import JoystickPad from '../components/JoystickPad';
 import JoystickCamera from '../components/JoystickCamera';
 
@@ -32,7 +33,7 @@ const HTML = `<!DOCTYPE html>
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            background-color: white; /* Ajout d'une couleur de fond si nécessaire */
+            background-color: #1C2631; /* Ajout d'une couleur de fond si nécessaire */
         }
         .iframe-container {
             display: flex;
@@ -56,21 +57,36 @@ const HTML = `<!DOCTYPE html>
 </html>
 `;
 
+/**
+ * Use Effect
+ * Start manual session
+ */
+useEffect(() => {
+  // start manual session
+  ActionHelper.startManualSession().then(() => { });
+
+  return () => {
+    ActionHelper.stopSession();
+    console.log('Session stopped and component unmounted.');
+  };
+}, []);
+
+// Get screen dimensions
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 export default function App() {
   return (
     <View style={styles.container}>
-       <View style={styles.joystickCameraContainer}>
-       <JoystickCamera/>
-     </View>
+      <View style={styles.pad}>
+        <JoystickPad />
+        </View>
 
       <WebView
         originWhitelist={['*']}
         source={{ html: HTML }}
         style={styles.webview}
       />
-    <View style={styles.joystickContainer}>
-        <JoystickPad />
-     </View>
+            <JoystickCamera />
+    
     </View>
   );
 }
@@ -78,31 +94,24 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'relative', // Important for absolute positioning of children
+    backgroundColor: Colors.light.background,
+    flexDirection: 'row', // Align children in a row
+    justifyContent: 'space-between', // Adjust as needed for spacing
+    alignItems: 'center', // Center align vertically
+  },
+  camera: {
+    width: screenWidth * 0.3, // Adjust width as needed
+    height: screenHeight, // Adjust height as needed
   },
   webview: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
+    flex: 1, // Take up remaining space
+    height: 100, // Adjust height as needed
   },
-  joystickContainer: {
-    position: 'absolute',
-    bottom: 20, 
-    left: 20,   
-    width: 150,
-    height: 150, 
-    zIndex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  joystickCameraContainer: {
-    position: 'absolute',
-    bottom: 20, 
-    right: 20,   
-    width: 150,
-    height: 150, 
-    zIndex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  pad: {
+    justifyContent: 'center', // Center align vertically
+    alignItems: 'center', // Center align horizontally
+    zIndex: 1, // Place the pad on top of the camera
+    width: screenWidth * 0.3, // Adjust width as needed
+    height: screenHeight, // Adjust height as needed
   },
 });

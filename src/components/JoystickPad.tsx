@@ -105,7 +105,7 @@ const cameraOn = () => {
         }
       
         const normalizedDistance = Math.min(distance, maxDistance) / maxDistance;
-        const speed = Math.round(normalizedDistance * 1000); // Calculate speed
+        const speed = Math.round(normalizedDistance * 2000); // Calculate speed
       
           // Determine direction
         
@@ -171,6 +171,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       position: 'relative',
+      
     },
     joystick: {
       width: 60, // Reduce the width of the joystick
