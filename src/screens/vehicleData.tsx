@@ -84,7 +84,7 @@ export default function VehicleData() {
     <ScrollView>
         <View style={styles.navigationBar}>
           <PressableButton 
-              css={{backgroundColor:Colors.light.primaryGreen, maxWidth: 30}}
+              css={{backgroundColor:Colors.light.primaryGreen, maxWidth: 30, alignItems: "center", justifyContent: "center"}}
               onPress={() => navigation.goBack()}
               >
               <CircleArrowLeft color={"#fff"}/>

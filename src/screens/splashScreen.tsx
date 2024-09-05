@@ -17,7 +17,7 @@ export default function SplashScreen() {
 
   const handleStart = () => {
     console.log('Button Start');
-    navigation.navigate('Login');
+    navigation.navigate('HomePage', { vehicleIP: '0.0.0.0' });
   };
 
   return (
@@ -27,7 +27,7 @@ export default function SplashScreen() {
           source={require('../assets/images/logo.png')}
           style={styles.logo}
         />
-        <Text style={styles.text}>Tech no. 8</Text>
+        <Text style={styles.text}>Tech Race</Text>
       </View>
       <View style={styles.buttonContainer}>
         <Button label="Start" onClick={handleStart} />

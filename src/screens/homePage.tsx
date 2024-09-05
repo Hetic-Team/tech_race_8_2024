@@ -20,11 +20,6 @@ export default function HomePage() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const handleMoreInfo = () => {
-    console.log('Button More Info');
-    navigation.navigate('MoreInfo');
-  };
-
   const handleDriveManually = () => {
     console.log('Button Drive Manually');
     navigation.navigate('DriveManually');
@@ -40,19 +35,16 @@ export default function HomePage() {
     navigation.navigate('Setting');
   };
 
-  const handleVideo = () => {
+  const handleTripsData = () => {
     console.log('Button Setting');
-    navigation.navigate('raceVideo');
+    navigation.navigate('MyTripsData');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.vehicleIP}>Vehicle Session id : {vehicleIP}</Text>
-
       <Button label="Drive Manually" onClick={handleDriveManually} />
       <Button label="Drive Auto" onClick={handleDriveAuto} />
-      <Button label="My statistics" onClick={handleMoreInfo} />
-      <Button label="My videos" onClick={handleVideo} />
+      <Button label="My Trips" onClick={handleTripsData} />
       <Button label="Settings" onClick={handleSetting} />
     </View>
   );
