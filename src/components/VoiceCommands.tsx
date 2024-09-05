@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Voice from "@react-native-voice/voice";
 import { BASE_URL } from "../constants/Urls";
@@ -8,25 +8,22 @@ interface VoiceControlProps {
 }
 
 interface Command {
-  keywords: string[];
+  keywords: Set<string>;
   action: (param?: string) => void;
 }
 
-const ACTIVATION_KEYWORD = "voiture";
-
 const VoiceControl: React.FC<VoiceControlProps> = ({ onActivationChange }) => {
   const [recognizedText, setRecognizedText] = useState("");
-  const [status, setStatus] = useState("En attente du mot-clé...");
+  const [status, setStatus] = useState("Listening for command...");
   const websocket = useRef<WebSocket | null>(null);
   const lastCommandTime = useRef(0);
   const commandQueue = useRef<Array<{ cmd: number; data: number[] | number }>>([]);
   const sirenInterval = useRef<NodeJS.Timeout | null>(null);
-  const isActivated = useRef(false);
 
   const startListening = useCallback(async () => {
     try {
-      await Voice.start("fr-FR");
-      setStatus("Écoute...");
+      await Voice.start("en-US");
+      setStatus("Listening...");
     } catch (e) {
       setTimeout(startListening, 500);
     }
@@ -41,7 +38,7 @@ const VoiceControl: React.FC<VoiceControlProps> = ({ onActivationChange }) => {
         websocket.current = new WebSocket(`ws://${BASE_URL}/ws`);
         await startListening();
       } catch (e) {
-        console.error("Erreur lors de l'initialisation de Voice:", e);
+        console.error("Error initializing Voice:", e);
       }
     };
 
@@ -58,11 +55,11 @@ const VoiceControl: React.FC<VoiceControlProps> = ({ onActivationChange }) => {
     };
   }, [startListening]);
 
-  const onSpeechError = (e: any) => {
+  const onSpeechError = useCallback(() => {
     startListening();
-  };
+  }, [startListening]);
 
-  const throttle = (func: Function, limit: number) => {
+  const throttle = useCallback((func: Function, limit: number) => {
     return (...args: any[]) => {
       const now = Date.now();
       if (now - lastCommandTime.current > limit) {
@@ -72,7 +69,7 @@ const VoiceControl: React.FC<VoiceControlProps> = ({ onActivationChange }) => {
         commandQueue.current.push(args[0]);
       }
     };
-  };
+  }, []);
 
   const sendWebSocketMessage = useCallback(throttle((message: { cmd: number; data: number[] | number }) => {
     if (websocket.current && websocket.current.readyState === WebSocket.OPEN) {
@@ -119,41 +116,42 @@ const VoiceControl: React.FC<VoiceControlProps> = ({ onActivationChange }) => {
     }, 10000);
   }, [sendWebSocketMessage]);
 
-  const commands: Command[] = [
+  const commands: Command[] = useMemo(() => [
     {
-      keywords: ["avance", "avancer", "aller", "avant", "devant"],
+      keywords: new Set(["netscape"]),
       action: () => sendWebSocketMessage({ cmd: 1, data: [1000, 1000, 1000, 1000] })
     },
     {
-      keywords: ["recule", "reculer", "arrière", "retour"],
+      keywords: new Set(["netflix"]),
       action: () => sendWebSocketMessage({ cmd: 1, data: [-1000, -1000, -1000, -1000] })
     },
     {
-      keywords: ["droite", "tourner à droite", "aller à droite"],
+      keywords: new Set(["pizza"]),
       action: () => sendWebSocketMessage({ cmd: 1, data: [1000, 1000, 0, 0] })
     },
     {
-      keywords: ["gauche", "tourner à gauche", "aller à gauche"],
+      keywords: new Set(["linux"]),
       action: () => sendWebSocketMessage({ cmd: 1, data: [0, 0, 1000, 1000] })
     },
     {
-      keywords: ["stop", "arrête", "arrêter", "arrête-toi", "stopper"],
+      keywords: new Set(["handsome"]),
       action: () => sendWebSocketMessage({ cmd: 1, data: [0, 0, 0, 0] })
     },
     {
-      keywords: ["police", "sirène", "urgence"],
+      keywords: new Set(["emergency"]),
       action: playSiren
     }
-  ];
+  ], [sendWebSocketMessage, playSiren]);
 
   const findCommand = useCallback((text: string): Command | undefined => {
+    const words = text.toLowerCase().split(/\s+/);
     return commands.find(command =>
-      command.keywords.some(keyword => text.toLowerCase().includes(keyword))
+      words.some(word => command.keywords.has(word))
     );
-  }, []);
+  }, [commands]);
 
   const handleUnrecognizedCommand = useCallback(() => {
-    console.log("Commande non reconnue");
+    console.log("Unrecognized command");
     sendWebSocketMessage({ cmd: 7, data: 1 });
     setTimeout(() => {
       sendWebSocketMessage({ cmd: 7, data: 0 });
@@ -165,35 +163,22 @@ const VoiceControl: React.FC<VoiceControlProps> = ({ onActivationChange }) => {
       const recognizedText = e.value[0].toLowerCase();
       setRecognizedText(recognizedText);
 
-      if (!isActivated.current) {
-        if (recognizedText.includes(ACTIVATION_KEYWORD)) {
-          isActivated.current = true;
-          onActivationChange(true);
-          setStatus("Activé ! Quelle est votre commande ?");
-          startListening();
-        } else {
-          startListening();
-        }
+      const command = findCommand(recognizedText);
+      if (command) {
+        command.action();
+        setStatus("Command executed.");
       } else {
-        const command = findCommand(recognizedText);
-        if (command) {
-          command.action();
-          setStatus("Commande exécutée. En attente du mot-clé...");
-        } else {
-          handleUnrecognizedCommand();
-          setStatus("Commande non reconnue. En attente du mot-clé...");
-        }
-        isActivated.current = false;
-        onActivationChange(false);
-        startListening();
+        handleUnrecognizedCommand();
+        setStatus("Unrecognized command.");
       }
+      startListening();
     }
-  }, [onActivationChange, startListening, findCommand, handleUnrecognizedCommand]);
+  }, [startListening, findCommand, handleUnrecognizedCommand]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.statusText}>{status}</Text>
-      <Text style={styles.recognizedText}>Texte reconnu : {recognizedText}</Text>
+      <Text style={styles.recognizedText}>Recognized text: {recognizedText}</Text>
     </View>
   );
 };
