@@ -1,24 +1,11 @@
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { Colors } from '../constants/Colors';
-
-import React, {useEffect} from 'react';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-import {useNavigation} from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../App';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import {JoystickPadTwo} from '../components/JoystickPadTwo';
-import ArrowPad from '../components/ArrowPad';
-import JoystickPad from '../components/JoystickPad';
 import JoystickCamera from '../components/JoystickCamera';
 import VoiceControl from '../components/VoiceCommands';
 
-
-const HTML = `<!DOCTYPE html>
+const HTML = `
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -33,7 +20,7 @@ const HTML = `<!DOCTYPE html>
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            background-color: white; /* Ajout d'une couleur de fond si nécessaire */
+            background-color: white;
         }
         .iframe-container {
             display: flex;
@@ -43,7 +30,7 @@ const HTML = `<!DOCTYPE html>
             height: 100%;
         }
         iframe {
-            border: 2px solid green; /* Supprime les bordures de l'iframe si vous ne les voulez pas */
+            border: 2px solid green;
             max-width: 100%;
             max-height: 100%;
         }
@@ -58,21 +45,22 @@ const HTML = `<!DOCTYPE html>
 `;
 
 export default function App() {
+  const [isActivated, setIsActivated] = useState(false);
+
   return (
-    <View style={styles.container}>
-       <View style={styles.joystickCameraContainer}>
-       <JoystickCamera/>
-     </View>
+    <View style={[styles.container, isActivated && styles.activatedBorder]}>
+      <View style={styles.joystickCameraContainer}>
+        <JoystickCamera />
+      </View>
 
       <WebView
         originWhitelist={['*']}
         source={{ html: HTML }}
         style={styles.webview}
       />
-    <View style={styles.joystickContainer}>
-        {/* <JoystickPad /> */}
-        <VoiceControl />
-     </View>
+      <View style={styles.joystickContainer}>
+        <VoiceControl onActivationChange={setIsActivated} />
+      </View>
     </View>
   );
 }
@@ -80,7 +68,12 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'relative', // Important for absolute positioning of children
+    position: 'relative',
+  },
+  activatedBorder: {
+    borderWidth: 15,
+    borderColor: '#90ee90',
+
   },
   webview: {
     flex: 1,
