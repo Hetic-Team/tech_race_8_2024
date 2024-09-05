@@ -40,6 +40,11 @@ export default function HomePage() {
     navigation.navigate('Setting');
   };
 
+  const handleVideo = () => {
+    console.log('Button Setting');
+    navigation.navigate('raceVideo');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.vehicleIP}>Vehicle Session id : {vehicleIP}</Text>
@@ -47,6 +52,7 @@ export default function HomePage() {
       <Button label="Drive Manually" onClick={handleDriveManually} />
       <Button label="Drive Auto" onClick={handleDriveAuto} />
       <Button label="My statistics" onClick={handleMoreInfo} />
+      <Button label="My videos" onClick={handleVideo} />
       <Button label="Settings" onClick={handleSetting} />
     </View>
   );
