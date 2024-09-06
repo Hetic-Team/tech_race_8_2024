@@ -47,20 +47,21 @@ const MyTripsData = () =>  {
     let hasStatsCount: number;
    
     tripsData.map((trip, index) => {
-        if(index > (tripsData.length - 6)) {
+
+        if(index > (tripsData.length - 12)) {
             sessions.push(trip.id)
             console.log(trip)
-           
+
             startDate = trip.start_time.split('-')[0].trim()
             endDate = trip.end_time.split('-')[0].trim()
             time = trip.start_time.split('-')[1].trim()
-            hasStatsCount = trip.collisions[0].count + trip.tracks[0].count 
+            hasStatsCount = trip.collisions[0].count + trip.tracks[0].count
 
-            medias.push({url: trip.videos.video_urls[0], session_id: trip.id, start_date: startDate, 
-              end_date: endDate, 
-              duration:trip.duration, time: time, 
-              hasStats: hasStatsCount > 0,
-              is_autopilot: trip.is_autopilot })
+            medias.push({url: trip.videos.video_urls[0], session_id: trip.id, start_date: startDate,
+                end_date: endDate,
+                duration:trip.duration, time: time,
+                hasStats: hasStatsCount > 0,
+                is_autopilot: trip.is_autopilot })
         }
       })
 
@@ -102,70 +103,115 @@ const MyTripsData = () =>  {
        
       };
 
+    const formatDuration = (duration: string) => {
+        // Match groups for hours, minutes, and seconds
+        const hoursMatch = duration.match(/(\d+)h/);
+        const minutesMatch = duration.match(/(\d+)m/);
+        const secondsMatch = duration.match(/(\d+)s/);
+
+        let formattedDuration = duration;
+
+        // Check and remove '0h' or '0m'
+        if (hoursMatch && hoursMatch[1] === '0') {
+            formattedDuration = formattedDuration.replace(/0h\s*/, '');
+        }
+        if (minutesMatch && minutesMatch[1] === '0') {
+            formattedDuration = formattedDuration.replace(/0m\s*/, '');
+        }
+
+        // Replace 's' with ' seconds', and handle pluralization if needed
+        if (secondsMatch) {
+            const secondsValue = secondsMatch[1]; // Extract the number preceding 's'
+            formattedDuration = formattedDuration.replace(
+                `${secondsValue}s`,
+                `${secondsValue} second${secondsValue !== '1' ? 's' : ''}`
+            );
+        }
+
+        // Similarly, handle pluralization for minutes and hours if needed
+        if (minutesMatch && minutesMatch[1] !== '0') {
+            const minutesValue = minutesMatch[1];
+            formattedDuration = formattedDuration.replace(
+                `${minutesValue}m`,
+                `${minutesValue} minute${minutesValue !== '1' ? 's' : ''}`
+            );
+        }
+
+        if (hoursMatch && hoursMatch[1] !== '0') {
+            const hoursValue = hoursMatch[1];
+            formattedDuration = formattedDuration.replace(
+                `${hoursValue}h`,
+                `${hoursValue} hour${hoursValue !== '1' ? 's' : ''}`
+            );
+        }
+
+        return formattedDuration.trim(); // Return the formatted duration
+    };
+
       const Item = ({ session_id, url, start_date, end_date, duration, time, hasStats, is_autopilot }: Media) => (
-        <View 
+        <View
         style={[{marginHorizontal: 20, marginVertical:15, borderRadius:5, paddingHorizontal:0, backgroundColor:Colors.dark.primaryGreen}]}>
           <View style={[{position:"relative"}]}>
             <View style={[{position:"absolute", top:8, right: 10, zIndex:999, backgroundColor:Colors.dark.primaryGreen, padding:4, borderRadius:5}]}>
-              <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]}>{is_autopilot ? "Automatic" : "Manual"} Driving</Text> 
+              <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]}>{is_autopilot ? "Automatic" : "Manual"} Driving</Text>
             </View>
-            <Video 
+            <Video
               controls={true}
-              source={{uri:  url}} 
+              source={{uri:  url}}
               ref={videoRef}
               style={[styles.backgroundVideo]} />
           </View>
           <TouchableOpacity style={[{paddingVertical:15, paddingHorizontal:10}]} onPress={() => navigation.navigate('TripGraphs', {tripId: session_id})}>
-            <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]} >{session_id} - {start_date} - {end_date}</Text>
-            <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]}>{time}</Text>
-            <Text style={[{fontSize:16, fontWeight: "bold", textAlign:"center", color:Colors.dark.mainBackground, fontStyle: 'italic'}]}>Duration: {duration.replace('s','')} seconds</Text>
-            {hasStats ? 
+            <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]} >{start_date} - {end_date}</Text>
+            <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]}>{time} {session_id}</Text>
+            <Text style={[{fontSize:16, fontWeight: "bold", textAlign:"center", color:Colors.dark.mainBackground, fontStyle: 'italic'}]}>Duration: {formatDuration(duration)}</Text>
+            {hasStats ?
             (<View style={[{columnGap:10, flexDirection:"row", alignItems:"center", justifyContent:"center", paddingVertical:10}]}>
               <View style={[{borderRadius:30, paddingHorizontal:32, paddingVertical:12, backgroundColor:Colors.dark.mainBackground, columnGap:10, flexDirection:"row", alignItems:"center", justifyContent:"center"}]}>
                 <ChartNoAxesCombined color={"#fff"} size={30}/>
                 <ChartArea color={"#fff"} size={30}/>
-                <Text style={[{color: "white", fontWeight: "bold", fontSize: 20}]}>Get statistics</Text> 
+                <Text style={[{color: "white", fontWeight: "bold", fontSize: 20}]}>Get statistics</Text>
               </View>
             </View>):null}
          </TouchableOpacity>
         </View>
-        
+
       );
-      
+
       const renderItem = ({ item }: any) => (
-        <Item session_id={item.session_id} url={item.url} 
-        start_date={item.start_date}  
-        end_date={item.end_date} 
-        time={item.time} 
-        duration={item.duration} 
+        <Item session_id={item.session_id} url={item.url}
+        start_date={item.start_date}
+        end_date={item.end_date}
+        time={item.time}
+        duration={item.duration}
         hasStats={item.hasStats} is_autopilot={item.is_autopilot}/>
       );
-    
+
   return (
     <View style={{ flex: 1, rowGap:2, backgroundColor:Colors.dark.mainBackground, paddingVertical:20 }}>
         <View style={[styles.container, {flexDirection: "row", columnGap: 20}]}>
-            <PressableButton 
+            <PressableButton
               css={{backgroundColor:Colors.light.primaryGreen, maxWidth: 30, alignItems: "center", justifyContent: "center"}}
               onPress={() => navigation.goBack()}
               >
               <CircleArrowLeft color={"#fff"}/>
             </PressableButton>
-            <PressableButton 
+            <PressableButton
               css={{backgroundColor:Colors.light.primaryGreen, flexDirection: "row", alignItems: "center", columnGap:6}}
               onPress={() => navigation.navigate('MoreInfo')}
               >
               <ChartColumn color={"#fff"}/>
-              <Text style={[{color: "white", fontWeight: "bold", fontSize: 20}]}>Compare all</Text> 
+              <Text style={[{color: "white", fontWeight: "bold", fontSize: 20}]}>Compare all</Text>
             </PressableButton>
 
-           
+
         </View>
         <View style={styles.container}>
         <Text style={styles.title}>My Trips</Text>
         <Text style={styles.subTitle}>See all your trips videos and statistics</Text>
-        <Text style={[styles.subTitle,styles.lastSubTitleLine]}>Only the 6 last trips are accounted</Text>
+        <Text style={[styles.subTitle,styles.lastSubTitleLine]}>Only the last trips are accounted</Text>
         </View>
-        <View style={[styles.tabsContainer, styles.container]}>  
+        <View style={[styles.tabsContainer, styles.container]}>
             <TouchableOpacity
                 style={[styles.tab, activeTab === 'All' && styles.activeTab]}
                 onPress={() => filterVideos('All')}
@@ -234,7 +280,7 @@ container: {
   },
 
   backgroundVideo: {
-    width: '100%', 
+    width: '100%',
     height: 200,
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
