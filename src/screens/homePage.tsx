@@ -1,7 +1,7 @@
 import Button from '../components/Button';
 import {Colors} from '../constants/Colors';
-import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React from 'react';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -9,6 +9,7 @@ import {
 import {useRoute, RouteProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../App';
 import {useNavigation} from '@react-navigation/native';
+import { IconLogout } from '../components/Icons/IconLogout';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type HomePageRouteProp = RouteProp<RootStackParamList, 'HomePage'>;
@@ -35,11 +36,24 @@ export default function HomePage() {
     navigation.navigate('MyTripsData');
   };
 
+  const handleLogout = () => {
+    navigation.navigate('HomePage', {vehicleIP: ""});
+}
+
+
   return (
     <View style={styles.container}>
+        <View style={[{flex:1, flexDirection:"column", justifyContent:"center", alignItems:"center", rowGap:30}]}>
       <Button label="Drive" onClick={handleDriveManually} />
       <Button label="My Trips" onClick={handleTripsData} />
-      <Button label="Settings" onClick={handleSetting} />
+   
+      <Button label="Modes" onClick={handleSetting} />
+      </View>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>LOGOUT</Text>
+          <IconLogout color="red" size={20}/>
+      </TouchableOpacity>
+     
     </View>
   );
 }
@@ -50,6 +64,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: Colors.dark.mainBackground,
+    paddingVertical: 20,
     paddingHorizontal: 40,
     gap: wp(15),
   },
@@ -70,5 +85,21 @@ const styles = StyleSheet.create({
   vehicleIP: {
     color: '#ffffff',
     fontSize: 20,
+  },
+  logoutButton: {
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 20,
+    borderColor: 'red',
+    borderWidth: 1,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+},
+  logoutButtonText:{
+      color: 'red',
+      fontSize: 20,
   },
 });

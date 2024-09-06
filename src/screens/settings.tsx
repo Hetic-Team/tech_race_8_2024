@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Colors } from '../constants/Colors';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { IconArrowLeft } from '../components/Icons/IconArowLeft';
-import { IconLogout } from '../components/Icons/IconLogout';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
@@ -20,10 +19,6 @@ export default function Setting() {
 
   const handleBack = () => {
     navigation.goBack();
-  }
-
-  const handleLogout = () => {
-      navigation.navigate('HomePage', {vehicleIP: ""});
   }
 
   const toggleSwitchSportMod = async () => {
@@ -144,13 +139,7 @@ export default function Setting() {
                 </View>
               </View>
             </View>
-
-              <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                  <Text style={styles.logoutButtonText}>LOGOUT</Text>
-                  <IconLogout color="red" size={20}/>
-              </TouchableOpacity>
           </View>
-
       </View>
   );
 }
@@ -175,21 +164,6 @@ const styles = StyleSheet.create({
       left: 20,
       position: 'absolute',
       gap: 20,
-  },
-  logoutButton: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      gap: 20,
-      borderColor: 'red',
-      borderWidth: 1,
-      paddingVertical: 15,
-      paddingHorizontal: 30,
-      borderRadius: 10,
-  },
-  logoutButtonText:{
-      color: 'red',
-      fontSize: 20,
   },
   settingsContainer: {
       flexDirection: 'column',
