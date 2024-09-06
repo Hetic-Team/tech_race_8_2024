@@ -1,5 +1,5 @@
 import {Colors} from '../constants/Colors';
-import React,  {useEffect, useState} from 'react';
+import React from 'react';
 import {CircleArrowLeft, Frown} from 'lucide-react-native';
 import {View, Text, StyleSheet, ActivityIndicator, ScrollView, Button} from 'react-native';
 import { LineChart } from "react-native-gifted-charts";
@@ -12,32 +12,6 @@ import useGetTripData from '../hooks/useGetTripData'
 type TripGraphRouteProp = RouteProp<RootStackParamList, 'TripGraphs'>;
 // internal components
 import PressableButton from '../components/PressableButton'
-export interface RaceDatas {
-  id: number
-  start_time: string
-  end_time: string
-  duration: string
-  is_autopilot: boolean
-  videos: Videos
-  collisions: Collision[]
-  tracks: Track[]
-} 
-
-export interface Videos {
-  video_urls: any[]
-}
-
-export interface Collision {
-  count: number
-  distances: any[]
-  timestamps: any[]
-}
-
-export interface Track {
-  count: number
-  line_tracking_values: number[]
-  timestamps: string[]
-}
 
 type ChartValue = {value: number, label: string}
 
@@ -94,7 +68,7 @@ export default function TripGraphs() {
         )
     }
 
-    const collisionValuesNoDouble = [...new Set(collisionsValues)]
+    const collisionValuesNoDouble:ChartValue[] = [...new Set(collisionsValues)];
   return (
     <ScrollView>
         <View style={styles.navigationBar}>

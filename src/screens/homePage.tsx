@@ -25,11 +25,6 @@ export default function HomePage() {
     navigation.navigate('DriveManually');
   };
 
-  const handleDriveAuto = () => {
-    console.log('Button Auto Drive');
-    navigation.navigate('AutoDrive');
-  };
-
   const handleSetting = () => {
     console.log('Button Setting');
     navigation.navigate('Setting');
@@ -42,8 +37,7 @@ export default function HomePage() {
 
   return (
     <View style={styles.container}>
-      <Button label="Drive Manually" onClick={handleDriveManually} />
-      <Button label="Drive Auto" onClick={handleDriveAuto} />
+      <Button label="Drive" onClick={handleDriveManually} />
       <Button label="My Trips" onClick={handleTripsData} />
       <Button label="Settings" onClick={handleSetting} />
     </View>

@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
 import SplashScreen from './src/screens/splashScreen';
 import HomePage from './src/screens/homePage';
-import AutoDrive from './src/screens/autoDrive';
 import Setting from './src/screens/settings';
 import VehicleData from './src/screens/vehicleData';
 import { NavigationContainer } from '@react-navigation/native';
@@ -37,7 +36,6 @@ export default function HomeScreen() {
         <Stack.Screen name="MyTripsData" component={MyTripsData} />
         <Stack.Screen name="TripGraphs" component={TripGraphs} />
         <Stack.Screen name="DriveManually" component={DriveManually} />
-        <Stack.Screen name="AutoDrive" component={AutoDrive} />
         <Stack.Screen name="Setting" component={Setting} />
       </Stack.Navigator>
     </NavigationContainer>
