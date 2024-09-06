@@ -12,6 +12,8 @@ import {
 import ArrowPad from '../components/ArrowPad';
 import ActionHelper from '../services/ActionHelper';
 import JoystickPad from '../components/JoystickPad';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CAMERA_URL } from '../constants/Urls';
 // import AnalogSwitch from '../components/AnalogSwitch';
 
 const HTML = `
@@ -48,7 +50,7 @@ const HTML = `
 </head>
 <body>
     <div class="iframe-container">
-        <iframe src="http://192.168.87.10:7000/" title="Camera Feed" height="296" width="400"></iframe>
+        <iframe src="${CAMERA_URL}" title="Camera Feed" height="80%" width="400"></iframe>
     </div>
 </body>
 </html>
@@ -63,6 +65,7 @@ const startManualSession = async () => {
 const stopSession = async () => {
   try {
     await ActionHelper.stopSession();
+
   } catch (error) {
     console.log('Error starting manual session:', error);
   }
@@ -75,35 +78,64 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
   export default function App() {
     const [isSportActive, setIsSportActive] = useState(false);
-    const [isSessionActive, setIsSessionActive] = useState(true);
+    const [isSessionActive, setIsSessionActive] = useState(false);
+    const [controllerType, setControllerType] = useState(1);
+    const [voiceActive, setIsVoiceActive] = useState(false);
 
     /**
      * Toogle session
      */
-    const toogleSession = () => {
-      console.log('Toogle session');
-      // if (isSessionActive) {
-      //   stopSession();
-      //   setIsSessionActive(false);
-      // } else {
-      //   startManualSession();
-      //   setIsSessionActive(true);
-      // }
+    const toogleSession = async () => {
+      try {
+        console.log("SEssion toggle", isSessionActive)
+        if (isSessionActive) {
+          await stopSession();
+          setIsSessionActive(false);
+        } else {
+          await startManualSession();
+          setIsSessionActive(true);
+        }
+      } catch (e) {
+        console.log(e)
+      }
     }
-    const toggleSportMode = () => {
-      console.log('Toggle sport mode');
+    /**
+     * Load Sport Mode
+     */
+    const loadSportMode = async() => {
+      const selectedMode = await AsyncStorage.getItem('selectedMod');
+      setIsSportActive(selectedMode !== null ? Boolean(selectedMode) : false);
+    }
+    /**
+     * Load controller type
+     */
+    const loadControllerType = async () => {
+      const controllerType = await AsyncStorage.getItem('selectedControl');
+      setControllerType(Number(controllerType) ?? 1);
+      console.log(controllerType);
+    }
+    /**
+     * toogle sportMode
+     */
+    const toggleSportMode = async() => {
       setIsSportActive(!isSportActive);
+      setIsSportActive(current => {
+        console.log(current);
+        return current;
+      } )
+      await AsyncStorage.setItem('selectedMod', JSON.stringify(!isSportActive));
     };
   /**
  * Use Effect
  * Start manual session
  */
 useEffect(() => {
-  // // start manual session
- 
+  loadSportMode();
+  loadControllerType();
 
   return () => {
     // stop session
+    setIsSessionActive(false);
     stopSession();
     console.log('Session stopped and component unmounted.');
   };
@@ -112,15 +144,15 @@ useEffect(() => {
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
       <TouchableOpacity
-        onPress={toggleSportMode}
+        onPress={toogleSession}
         style={[
           styles.deactiveSportButton,
-          isSportActive && styles.activeSportButton,  // Apply green shadow when active
+          isSessionActive && styles.activeSportButton,
+          { zIndex: 1 } // Apply green shadow when active
         ]}
       >
-        
-        <Text style={styles.buttonText}>SS</Text>
-        </TouchableOpacity>
+        <Text style={styles.buttonText}>E</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         onPress={toggleSportMode}
         style={[
@@ -133,9 +165,15 @@ useEffect(() => {
         </TouchableOpacity>
       </View>
     <View style={styles.controlContainer}>
-      <View style={styles.pad}>
-        {/* <JoystickPad /> */}
-        <ArrowPad/>
+        <View style={styles.pad}>
+
+          {/* <VoiceControl /> */}
+          {controllerType == 1 ? (
+            <JoystickPad key={isSportActive ? 'sport' : 'normal'} isSportMode={isSportActive} />
+          ) : controllerType == 2 ? (
+            <ArrowPad key={isSportActive ? 'sport' : 'normal'} isSportMode={isSportActive} />
+          ) : <VoiceControl onActivationChange={setIsVoiceActive} />
+          }
         </View>
 
       <WebView

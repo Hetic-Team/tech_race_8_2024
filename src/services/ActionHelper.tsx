@@ -12,11 +12,13 @@ export default class ActionHelper {
         return new Promise((resolve, reject) => {
             axios.get(`http://${SESSION_URL}/sessions/start/0`)
             // @ts-ignore
-            .then((response) => {
+                .then((response) => {
+                console.log("Manual Session Connected")
                 resolve(response.data);
             })
             // @ts-ignore
-            .catch((error) => {
+                .catch((error) => {
+                    console.log(error.toString());
                 reject(error);
             });
         });
@@ -29,7 +31,8 @@ export default class ActionHelper {
         return new Promise((resolve, reject) => {
             axios.get(`http://${SESSION_URL}/sessions/start/1`)
             // @ts-ignore
-            .then((response) => {
+                .then((response) => {
+                    console.log("Automatic Session Connected")
                 resolve(response.data);
             })
             // @ts-ignore

@@ -129,7 +129,7 @@ export default function Setting() {
           <Text style={styles.settingsLabel}>Mods :</Text>
           <View style={styles.modsSettingsContainer}>
             <View style={styles.rowModsSettings}>
-              <Text style={styles.settingsText}>Sport Mod</Text>
+              <Text style={styles.settingsText}>Sport Mode</Text>
               <SwitchButton isActive={isSportModSelected} onClick={toggleSwitchSportMod} />
             </View>
           </View>

@@ -2,16 +2,23 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { BASE_URL } from '../constants/Urls';
-import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload} from '../services/MovementService';
-const ArrowPad = () => {
+import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload, getCameraOnPayload} from '../services/MovementService';
+const ArrowPad = ({isSportMode}: { isSportMode: boolean }) => {
       const [ws, setWs] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
-
+  /**
+     * Get the payload for the camera to turn on
+     */
+  const cameraOn = () => {
+    const cameraCommandOn = getCameraOnPayload();
+    sendPayload(cameraCommandOn);
+    
+}
   useEffect(() => {
     const socket = new WebSocket(`ws://${BASE_URL}/ws`);
-    console.log("Bae URL", BASE_URL)
     socket.onopen = () => {
       console.log('WebSocket connection opened');
+      cameraOn();
       setWs(socket);
     };
 
@@ -43,7 +50,7 @@ const ArrowPad = () => {
   //   }
   // };
 
-  const sendPayload = (payload: { cmd: number; data: number[]; }) => {
+  const sendPayload = (payload: any ) => {
 
     if (ws) {
       ws.send(JSON.stringify(payload));
@@ -54,13 +61,14 @@ const ArrowPad = () => {
   const sendDirectionToAPI = async (type: Number) => {
     try {
       console.log('Sending direction to API:', type);
+      let speed = isSportMode? 4000:1000
       if(type == 0) sendPayload(getStopPayload());
       else if (type == 1) {
-        sendPayload(getForwardsPayload());
+        sendPayload(getForwardsPayload(speed));
       }
-      else if (type == 2) sendPayload(getBackwardsPayload());
-      else if (type == 3) sendPayload(getLeftPayload());
-      else if (type == 4) sendPayload(getRightPayload());
+      else if (type == 2) sendPayload(getBackwardsPayload(speed));
+      else if (type == 3) sendPayload(getLeftPayload(speed));
+      else if (type == 4) sendPayload(getRightPayload(speed));
     } catch (error) {
       console.log('Error sending direction to API:', error);
     }

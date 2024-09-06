@@ -3,12 +3,18 @@ import { View, Animated, PanResponder, StyleSheet } from 'react-native';
 import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload, getCameraOnPayload, getUpLeftPayload, getUpRightPayload, getDownLeftPayload, getDownRightPayload } from '../services/MovementService';
 import { BASE_URL } from '../constants/Urls';
 
-const JoystickPad: React.FC = () => {
-    const wsRef = useRef<WebSocket | null>(null);
+type JoystickPadProps = {
+  isSportMode: boolean;
+};
+
+const JoystickPad: React.FC<JoystickPadProps> = (props) => {
+  const wsRef = useRef<WebSocket | null>(null);
   const pan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;  const [throttleTimeout, setThrottleTimeout] = useState<NodeJS.Timeout | null>(null);
   const throttleDelay = 400;
 
-  useEffect(() => {           
+
+
+  useEffect(() => {      
     const socket = new WebSocket(`ws://${BASE_URL}/ws`);
     // console.log("BASE URL", BASE_URL);
 
@@ -38,7 +44,7 @@ const JoystickPad: React.FC = () => {
      * Get the payload for the camera to turn on
      */
 const cameraOn = () => {
-        const cameraCommandOn = getCameraOnPayload();
+    const cameraCommandOn = getCameraOnPayload();
     sendPayload(cameraCommandOn);
     
 }
@@ -105,7 +111,9 @@ const cameraOn = () => {
         }
       
         const normalizedDistance = Math.min(distance, maxDistance) / maxDistance;
-        const speed = Math.round(normalizedDistance * 2000); // Calculate speed
+        console.log(props.isSportMode)
+        const dynamicSpeed = props.isSportMode ? 4000 : 1000;
+        const speed = Math.round(normalizedDistance * dynamicSpeed); // Calculate speed
       
           // Determine direction
         
