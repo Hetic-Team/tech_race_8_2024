@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
 import Slider from '@react-native-community/slider';
 import { BASE_URL } from '../constants/Urls';
 import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
@@ -11,8 +11,13 @@ const JoystickCamera: React.FC = () => {
   const wsRef = useRef<WebSocket | null>(null);
   const [xvalue, setXValue] = useState(90);
   const [yvalue, setYValue] = useState(90);
+  const [isSportActive, setIsSportActive] = useState(false);
   const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-
+    // Toggle button state
+    const toggleSportMode = () => {
+      setIsSportActive(!isSportActive);
+    };
+  
   useEffect(() => {   
     
     
@@ -61,7 +66,10 @@ const JoystickCamera: React.FC = () => {
     , [xvalue, yvalue]);
   return (
     <View style={styles.container}>
-      <Text style={styles.textContainer}>Camera</Text>
+     
+     <View style={styles.topContainer}>
+        <Text style={styles.textContainer}>Camera</Text>
+        </View>
           <Slider
         style={styles.sliderContainer}
         minimumValue={30}
@@ -87,6 +95,10 @@ const JoystickCamera: React.FC = () => {
   );
 };
 const styles = StyleSheet.create({
+  topContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
   container:
   {
     padding: 10,
@@ -95,7 +107,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor:Colors.light.background,
-    height: heightPercentageToDP('100%')
   },
   sliderContainer: {
     transform: [{ rotate: '90deg' }],
@@ -106,12 +117,14 @@ const styles = StyleSheet.create({
   textContainer: {
     color: Colors.light.primaryGreen,
     fontSize: 20, 
-    width: "100%",
+    // width: "100%",
     paddingHorizontal: 20,
     fontWeight: 'bold',
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
+  
+
 });
 export default JoystickCamera;

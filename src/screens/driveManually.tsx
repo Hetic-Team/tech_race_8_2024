@@ -1,6 +1,6 @@
 import { WebView } from 'react-native-webview';
 import { Colors } from '../constants/Colors';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -9,13 +9,14 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View, Dimensions} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, View, Dimensions,TouchableOpacity} from 'react-native';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {JoystickPadTwo} from '../components/JoystickPadTwo';
 import ArrowPad from '../components/ArrowPad';
 import ActionHelper from '../services/ActionHelper';
 import JoystickPad from '../components/JoystickPad';
 import JoystickCamera from '../components/JoystickCamera';
+// import AnalogSwitch from '../components/AnalogSwitch';
 
 
 const HTML = `<!DOCTYPE html>
@@ -56,44 +57,121 @@ const HTML = `<!DOCTYPE html>
 </body>
 </html>
 `;
+const startManualSession = async () => {
+  try {
+    await ActionHelper.startManualSession();
+  } catch (error) {
+    console.log('Error starting manual session:', error);
+  }
+}
+const stopSession = async () => {
+  try {
+    await ActionHelper.stopSession();
+  } catch (error) {
+    console.log('Error starting manual session:', error);
+  }
+}
 
-/**
+
+
+// Get screen dimensions
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+  export default function App() {
+    const [isSportActive, setIsSportActive] = useState(false);
+    const [isSessionActive, setIsSessionActive] = useState(true);
+
+    /**
+     * Toogle session
+     */
+    const toogleSession = () => {
+      console.log('Toogle session');
+      // if (isSessionActive) {
+      //   stopSession();
+      //   setIsSessionActive(false);
+      // } else {
+      //   startManualSession();
+      //   setIsSessionActive(true);
+      // }
+    }
+    const toggleSportMode = () => {
+      console.log('Toggle sport mode');
+      setIsSportActive(!isSportActive);
+    };
+  /**
  * Use Effect
  * Start manual session
  */
 useEffect(() => {
-  // start manual session
-  ActionHelper.startManualSession().then(() => { });
+  // // start manual session
+ 
 
   return () => {
-    ActionHelper.stopSession();
+    // stop session
+    stopSession();
     console.log('Session stopped and component unmounted.');
   };
 }, []);
-
-// Get screen dimensions
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-export default function App() {
   return (
     <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+      <TouchableOpacity
+        onPress={toggleSportMode}
+        style={[
+          styles.deactiveSportButton,
+          isSportActive && styles.activeSportButton,  // Apply green shadow when active
+        ]}
+      >
+        
+        <Text style={styles.buttonText}>SS</Text>
+        </TouchableOpacity>
+      <TouchableOpacity
+        onPress={toggleSportMode}
+        style={[
+          styles.deactiveSportButton,
+          isSportActive && styles.activeSportButton,  // Apply green shadow when active
+        ]}
+      >
+        
+        <Text style={styles.buttonText}>S</Text>
+        </TouchableOpacity>
+      </View>
+    <View style={styles.controlContainer}>
       <View style={styles.pad}>
-        <JoystickPad />
+        {/* <JoystickPad /> */}
+        <ArrowPad/>
         </View>
 
       <WebView
         originWhitelist={['*']}
         source={{ html: HTML }}
         style={styles.webview}
-      />
+        />
             <JoystickCamera />
     
-    </View>
+      </View>
+      </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    height: "100%", 
+    backgroundColor: Colors.light.background,
+    width:  "100%",
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
+    height: "100%",
+  },
+  controlContainer: {
+    flex: 5,
     backgroundColor: Colors.light.background,
     flexDirection: 'row', // Align children in a row
     justifyContent: 'space-between', // Adjust as needed for spacing
@@ -113,5 +191,28 @@ const styles = StyleSheet.create({
     zIndex: 1, // Place the pad on top of the camera
     width: screenWidth * 0.3, // Adjust width as needed
     height: screenHeight, // Adjust height as needed
+  },
+  deactiveSportButton: {
+    height: 40,
+    width:40,
+    borderRadius: 40,  // Make it circular
+    backgroundColor: '#1c1c1e',  // Dark color like a car button (metallic look)
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,  // Basic elevation
+  },
+  activeSportButton: {
+    height: 40,
+    width: 40,
+    backgroundColor: '#1c1c1e',  // Keep the car button look
+    shadowColor: '#4CAF50',  // Green shadow around the button
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+  },
+  buttonText: {
+    fontSize: 24,
+    color: '#fff',  // White color for the "S"
+    fontWeight: 'bold',
   },
 });
