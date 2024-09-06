@@ -2,19 +2,21 @@ import {Colors} from '../constants/Colors';
 import React, { useEffect, useState } from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { IconArrowLeft } from '../components/Icons/IconArowLeft';
-import { LogOut } from 'lucide-react-native';
+import { IconLogout } from '../components/Icons/IconLogout';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconArrowJoystick } from '../components/Icons/IconArrowJoystick';
 import { IconJoystick } from '../components/Icons/IconJoystick';
+import { IconVoice } from '../components/Icons/IconVoice';
+import { SwitchButton } from '../components/SwitchButton';
 
 export default function Setting() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-
   const [selectedControl, setSelectedControl] = useState('Joystick');
+  const [isSportModSelected ,setIsSportModSelected] = useState(false);
 
   const handleBack = () => {
     navigation.goBack();
@@ -22,6 +24,17 @@ export default function Setting() {
 
   const handleLogout = () => {
       navigation.navigate('Login');
+  }
+
+  const toggleSwitchSportMod = async () => {
+    const newSportModState = !isSportModSelected;
+    setIsSportModSelected(newSportModState);
+
+    try {
+      await AsyncStorage.setItem('selectedMod', JSON.stringify(newSportModState));
+    } catch (e) {
+      console.error('Failed to save state to AsyncStorage', e);
+    }
   }
 
   // Selection du joystick pour déplacer la voiture
@@ -54,6 +67,21 @@ export default function Setting() {
     }
   };
 
+  // Selection de la reconnaissance vocale pour déplacer la voiture
+  const handleSelectVoice = async () => {
+    if (selectedControl === 'Voice') {
+      return;
+    }
+
+    setSelectedControl('Voice');
+
+    try {
+      await AsyncStorage.setItem('selectedControl', 'Voice');
+    } catch (e) {
+      console.error('Failed to save state to AsyncStorage', e);
+    }
+  };
+
   useEffect(() => {
     const loadSettings = async () => {
       try {
@@ -66,40 +94,72 @@ export default function Setting() {
       }
     };
 
+    const loadSportModState = async () => {
+      try {
+        const savedModState = await AsyncStorage.getItem('selectedMod');
+        if (savedModState !== null) {
+          setIsSportModSelected(JSON.parse(savedModState));
+        }
+      } catch (e) {
+        console.error('Failed to load state from AsyncStorage', e);
+      }
+    };
+
     loadSettings();
+    loadSportModState();
   }, []);
-  
+
   return (
       <View style={styles.container}>
           <View style={styles.navigationContainer}>
               <TouchableOpacity onPress={handleBack}>
                   <IconArrowLeft />
               </TouchableOpacity>
-              <Text style={styles.settingsText}>Settings</Text>
-          </View>
-          <View style={styles.vehiculeInformations}>
-              <Text style={styles.vehiculeText}>Vehicule ID : 1234 </Text>
+              <Text style={styles.pageText}>Settings</Text>
           </View>
           <View style={styles.settingsContainer}>
-              <TouchableOpacity style={selectedControl === 'Joystick' ? styles.joystickActiveCard : styles.joystickCard} onPress={handleSelectJoystick}>
-                <IconJoystick size={100} color={selectedControl === 'Joystick' ? Colors.dark.primaryGreen : "white"}/>
-                <Text style={selectedControl === 'Joystick' ? styles.activeSettingsText : styles.settingsText}>JOYSTICK</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={selectedControl === 'Arrow' ? styles.joystickActiveCard : styles.joystickCard} onPress={handleSelectArrow}>
-                <IconArrowJoystick size={100} color={selectedControl === 'Arrow' ? Colors.dark.primaryGreen : "white"}/>
-                <Text style={selectedControl === 'Arrow' ? styles.activeSettingsText : styles.settingsText}>ARROW</Text>
-              </TouchableOpacity>
+            <View style={styles.listSettingsContainer}>
+              <Text style={styles.settingsLabel}>Controls :</Text>
+              <View style={styles.controlSettingsContainer}>
+                <TouchableOpacity style={selectedControl === 'Joystick' ? styles.joystickActiveCard : styles.joystickCard} onPress={handleSelectJoystick}>
+                  <IconJoystick size={50} color={selectedControl === 'Joystick' ? Colors.dark.primaryGreen : Colors.dark.placeholder}/>
+                  <Text style={selectedControl === 'Joystick' ? styles.activeSettingsText : styles.settingsText}>JOYSTICK</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={selectedControl === 'Arrow' ? styles.joystickActiveCard : styles.joystickCard} onPress={handleSelectArrow}>
+                  <IconArrowJoystick size={50} color={selectedControl === 'Arrow' ? Colors.dark.primaryGreen : Colors.dark.placeholder}/>
+                  <Text style={selectedControl === 'Arrow' ? styles.activeSettingsText : styles.settingsText}>ARROW</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={selectedControl === 'Voice' ? styles.joystickActiveCard : styles.joystickCard} onPress={handleSelectVoice}>
+                  <IconVoice size={50} color={selectedControl === 'Voice' ? Colors.dark.primaryGreen : Colors.dark.placeholder}/>
+                  <Text style={selectedControl === 'Voice' ? styles.activeSettingsText : styles.settingsText}>VOICE</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.listSettingsContainer}>
+              <Text style={styles.settingsLabel}>Mods :</Text>
+              <View style={styles.modsSettingsContainer}>
+                <View style={styles.rowModsSettings}>
+                  <Text style={styles.settingsText}>Sport Mod</Text>
+                  <SwitchButton isActive={isSportModSelected} onClick={toggleSwitchSportMod} />
+                </View>
+              </View>
+            </View>
+
               <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                   <Text style={styles.logoutButtonText}>LOGOUT</Text>
-                  <LogOut color="red" size={20}/>
+                  <IconLogout color="red" size={20}/>
               </TouchableOpacity>
           </View>
 
       </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
+  pageText: {
+    color: 'white',
+    fontSize: 20,
+  },
   container: {
       position: 'relative',
       flex: 1,
@@ -107,11 +167,6 @@ const styles = StyleSheet.create({
       backgroundColor: Colors.dark.mainBackground,
       paddingHorizontal: 40,
       height: 50,
-  },
-  vehiculeInformations: {
-      top: 60,
-      left: 40,
-      position: 'absolute',
   },
   navigationContainer:{
       flexDirection: 'row',
@@ -138,7 +193,30 @@ const styles = StyleSheet.create({
   },
   settingsContainer: {
       flexDirection: 'column',
-      gap: 60,
+      gap: 40,
+  },
+  listSettingsContainer: {
+    flexDirection: 'column',
+    gap: 10,
+  },
+  settingsLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Colors.dark.primaryGreen,
+  },
+  controlSettingsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 20,
+  },
+  modsSettingsContainer: {
+    flexDirection: 'column',
+    gap: 20,
+  },
+  rowModsSettings: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 20,
   },
   vehiculeText: {
       color: Colors.dark.text,
@@ -146,12 +224,14 @@ const styles = StyleSheet.create({
       marginTop: 20,
   },
   settingsText:{
-      color: Colors.dark.text,
+      color: Colors.dark.placeholder,
       fontSize: 20,
+      fontWeight: 'bold',
   },
   activeSettingsText: {
     color: Colors.dark.primaryGreen,
     fontSize: 20,
+    fontWeight: 'bold',
   },
   joystickActiveCard: {
     borderWidth: 4,
@@ -161,6 +241,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     paddingVertical: 20,
+    width: 150,
+    height: 150,
   },
   joystickCard: {
     borderWidth: 2,
@@ -170,5 +252,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     paddingVertical: 20,
+    width: 150,
+    height: 150,
   }
 });
