@@ -76,7 +76,6 @@ export default function Setting() {
       }
     };
 
-
     const loadSportModState = async () => {
       try {
         const savedModState = await AsyncStorage.getItem('selectedMod');

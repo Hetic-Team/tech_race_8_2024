@@ -1,6 +1,3 @@
-// @ts-nocheck
-import { KorolJoystick } from "korol-joystick";
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload} from '../services/MovementService';
@@ -10,7 +7,7 @@ export const JoystickPadTwo = () => {
   const [ws, setWs] = useState(null);
   const [messages, setMessages] = useState([]);
 
-  const sendPayload = (payload) => {
+  const sendPayload = (payload: any) => {
     console.log('sdsd')
     
     if (ws) {
