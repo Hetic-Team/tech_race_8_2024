@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import  { INFO_URL } from '../constants/Urls.ts'
 export interface Videos {
   video_urls: any[]
 }
@@ -35,11 +35,10 @@ export interface Track {
 export default function useGetTripData() {
     const [isLoading, setLoading] = useState(true);
     const [raceData, setRaceData] = useState<RaceDatas[]>([]);
-
-
+    
     const getTripData = async () => {
       try {
-        const response = await fetch('http://10.0.2.2:9000/sessions/info');
+        const response = await fetch(INFO_URL);
         const json = await response.json();
         setRaceData(json);
       } catch (error) {

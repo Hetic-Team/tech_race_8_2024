@@ -1,38 +1,13 @@
 import {Colors} from '../constants/Colors';
-import React,  {useEffect, useState} from 'react';
+import React from 'react';
 import {CircleArrowLeft} from 'lucide-react-native';
-import {View, Text, StyleSheet, ActivityIndicator, ScrollView, Button} from 'react-native';
+import {View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { BarChart, PopulationPyramid } from "react-native-gifted-charts";
 import { useNavigation } from '@react-navigation/native';
 
 // internal components
 import PressableButton from '../components/PressableButton'
-export interface RaceDatas {
-  id: number
-  start_time: string
-  end_time: string
-  duration: string
-  is_autopilot: boolean
-  videos: Videos
-  collisions: Collision[]
-  tracks: Track[]
-} 
-
-export interface Videos {
-  video_urls: any[]
-}
-
-export interface Collision {
-  count: number
-  distances: any[]
-  timestamps: any[]
-}
-
-export interface Track {
-  count: number
-  line_tracking_values: number[]
-  timestamps: string[]
-}
+import useGetTripData from "../hooks/useGetTripData.tsx";
 
 type ChartValue = {value: number, label: string, frontColor: string}
 type PyramidValue = {left: number, right:number, yAxisLabel: string}
@@ -40,34 +15,17 @@ type PyramidValue = {left: number, right:number, yAxisLabel: string}
 
 export default function VehicleData() {
 
-  const navigation = useNavigation();
+   const navigation = useNavigation();
 
-    const [isLoading, setLoading] = useState(true);
-    const [telemetry, setTelemetry] = useState<RaceDatas[]>([]);
-    // http://192.168.87.82 - ip de Justin avec son partage co sur Android
-    const getTelemetry = async () => {
-      try {
-        const response = await fetch('http://10.0.2.2:9000/sessions/info');
-        const json = await response.json();
-        setTelemetry(json);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    useEffect(() => {
-      getTelemetry() 
-    }, []);
+   const { isLoading, raceData } = useGetTripData()
 
-    const itemCounter = (array: Array<number>, item: Array<number>) => array.flat(Infinity).filter(currentItem => item.includes(currentItem)).length;
+   const itemCounter = (array: Array<number>, item: Array<number>) => array.flat(Infinity).filter(currentItem => item.includes(currentItem)).length;
 
     let collisionNumber: ChartValue[] = []
     let courseDurations: ChartValue[] = []
     let deriveLeft: PyramidValue[] = []
 
-    const stats = telemetry.filter(item => item.collisions[0].count > 0 && item.tracks[0].count > 0)
+    const stats = raceData.filter(item => item.collisions[0].count > 0 && item.tracks[0].count > 0)
 
 
     stats.map((telemetryData, index) => {

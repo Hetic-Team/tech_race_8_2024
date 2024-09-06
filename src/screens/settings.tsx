@@ -1,5 +1,5 @@
-import {Colors} from '../constants/Colors';
 import React, { useEffect, useState } from 'react';
+import { Colors } from '../constants/Colors';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { IconArrowLeft } from '../components/Icons/IconArowLeft';
 import { IconLogout } from '../components/Icons/IconLogout';
@@ -23,7 +23,7 @@ export default function Setting() {
   }
 
   const handleLogout = () => {
-      navigation.navigate('Login');
+      navigation.navigate('HomePage', {vehicleIP: ""});
   }
 
   const toggleSwitchSportMod = async () => {
