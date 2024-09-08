@@ -1,4 +1,18 @@
 {
   "name": "tech_race_8_2024",
-  "displayName": "tech_race_8_2024"
+  "displayName": "tech_race_8_2024",
+  "plugins": [
+    [
+      "react-native-video",
+      {
+        "enableNotificationControls": true,
+        "androidExtensions": {
+          "useExoplayerRtsp": false,
+          "useExoplayerSmoothStreaming": false,
+          "useExoplayerHls": false,
+          "useExoplayerDash": false,
+        }
+      }
+    ]
+  ]
 }

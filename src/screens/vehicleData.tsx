@@ -20,7 +20,7 @@ export default function VehicleData() {
    const { isLoading, raceData } = useGetTripData()
 
    const itemCounter = (array: Array<number>, item: Array<number>) => array.flat(Infinity).filter(currentItem => item.includes(currentItem)).length;
-
+ 
     let collisionNumber: ChartValue[] = []
     let courseDurations: ChartValue[] = []
     let deriveLeft: PyramidValue[] = []

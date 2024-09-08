@@ -2,10 +2,6 @@
 import {Colors} from '../constants/Colors';
 import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
 import Button from '../components/Button';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -43,12 +39,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   centeredContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   logo: {
-    // width: 100,
-    // height: 100,
     marginBottom: 20,
   },
   text: {
@@ -57,9 +52,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   buttonContainer: {
-    position: 'absolute',
     bottom: 30,
-    width: '100%',
     paddingHorizontal: 20,
+    alignContent: 'center',
+    justifyContent: 'center',
   },
 });

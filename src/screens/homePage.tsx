@@ -96,20 +96,4 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 20,
   },
-  logoutButton: {
-    marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
-    borderColor: 'red',
-    borderWidth: 1,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-},
-  logoutButtonText:{
-      color: 'red',
-      fontSize: 20,
-  },
 });

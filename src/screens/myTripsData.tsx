@@ -1,18 +1,16 @@
 import {Colors} from '../constants/Colors';
 import React,  {useEffect, useState, useRef} from 'react';
 import {CircleArrowLeft, ChartColumn, ChartArea, ChartNoAxesCombined} from 'lucide-react-native';
-import {View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Video, {VideoRef} from 'react-native-video';
+//import Video, {VideoRef} from 'react-native-video';
 import PressableButton from '../components/PressableButton'
 import {RootStackParamList} from '../../App';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import useGetTripData from '../hooks/useGetTripData'
+import { AdvancedVideo } from 'cloudinary-react-native';
+import { Cloudinary } from "@cloudinary/url-gen";
 
-
-  
-  type ChartValue = {value: number, label: string, frontColor: string}
-  type PyramidValue = {left: number, right:number, yAxisLabel: string}
 
   type Media = {
     url: string, 
@@ -30,6 +28,14 @@ const MyTripsData = () =>  {
 
   
     const [activeTab, setActiveTab] = useState('All');
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
+    }, []);
 
     // http://192.168.87.82 - ip de Justin avec son partage co sur Android
   
@@ -37,7 +43,7 @@ const MyTripsData = () =>  {
     
     const tripsData = raceData.filter(item => item.videos.video_urls.length > 0 && parseInt(item.duration) > 0)
 
-    const videoRef = useRef<VideoRef>(null);
+    //const videoRef = useRef<VideoRef>(null);
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     let medias: Media[] = []
     let sessions: Array<number> = []
@@ -155,11 +161,11 @@ const MyTripsData = () =>  {
             <View style={[{position:"absolute", top:8, right: 10, zIndex:999, backgroundColor:Colors.dark.primaryGreen, padding:4, borderRadius:5}]}>
               <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]}>{is_autopilot ? "Automatic" : "Manual"} Driving</Text>
             </View>
-            <Video
+            {/* <Video
               controls={true}
               source={{uri:  url}}
               ref={videoRef}
-              style={[styles.backgroundVideo]} />
+              style={[styles.backgroundVideo]} /> */}
           </View>
           <TouchableOpacity style={[{paddingVertical:15, paddingHorizontal:10}]} onPress={() => navigation.navigate('TripGraphs', {tripId: session_id})}>
             <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]} >{start_date} - {end_date}</Text>
@@ -238,6 +244,8 @@ const MyTripsData = () =>  {
           renderItem={renderItem}
           keyExtractor={(item) => item.url}
           numColumns={1}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
         </View>)}
 
