@@ -1,6 +1,6 @@
 import {Colors} from '../constants/Colors';
 import React, { useEffect, useState } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
 import { IconArrowLeft } from '../components/Icons/IconArowLeft';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -34,6 +34,7 @@ export default function Setting() {
 
   const [selectedControl, setSelectedControl] = useState(1);
   const [isSportModSelected ,setIsSportModSelected] = useState(false);
+  const [isAutoMode ,setIsAutoMode] = useState(false);
 
   const handleBack = () => {
     navigation.goBack();
@@ -45,6 +46,15 @@ export default function Setting() {
 
     try {
       await AsyncStorage.setItem('selectedMod', JSON.stringify(newSportModState));
+    } catch (e) {
+      console.error('Failed to save state to AsyncStorage', e);
+    }
+  }
+  const toggleDriveMode = async () => {
+    setIsAutoMode(!isAutoMode);
+
+    try {
+      await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!isAutoMode));
     } catch (e) {
       console.error('Failed to save state to AsyncStorage', e);
     }
@@ -86,13 +96,24 @@ export default function Setting() {
         console.error('Failed to load state from AsyncStorage', e);
       }
     };
+    const loadDriveMode = async () => {
+      try {
+        const savedModState = await AsyncStorage.getItem('driveAutoMode');
+        if (savedModState !== null) {
+          setIsAutoMode(JSON.parse(savedModState));
+        }
+      } catch (e) {
+        console.error('Failed to load state from AsyncStorage', e);
+      }
+    };
 
     loadSelectedControl();
     loadSportModState();
+    loadDriveMode();
   }, []);
   
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.navigationContainer}>
         <TouchableOpacity onPress={handleBack}>
             <IconArrowLeft />
@@ -128,6 +149,10 @@ export default function Setting() {
         <View style={styles.listSettingsContainer}>
           <Text style={styles.settingsLabel}>Mods :</Text>
           <View style={styles.modsSettingsContainer}>
+          <View style={styles.rowModsSettings}>
+              <Text style={styles.settingsText}>Auto Mode</Text>
+              <SwitchButton isActive={isAutoMode} onClick={toggleDriveMode} />
+            </View>
             <View style={styles.rowModsSettings}>
               <Text style={styles.settingsText}>Sport Mode</Text>
               <SwitchButton isActive={isSportModSelected} onClick={toggleSwitchSportMod} />
@@ -135,7 +160,7 @@ export default function Setting() {
           </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

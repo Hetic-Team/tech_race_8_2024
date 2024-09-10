@@ -4,16 +4,16 @@ import { WebView } from 'react-native-webview';
 import JoystickCamera from '../components/JoystickCamera';
 import VoiceControl from '../components/VoiceCommands';
 import { Colors } from '../constants/Colors';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
-    heightPercentageToDP,
-} from 'react-native-responsive-screen';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../App';
 import ArrowPad from '../components/ArrowPad';
 import ActionHelper from '../services/ActionHelper';
 import JoystickPad from '../components/JoystickPad';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CAMERA_URL } from '../constants/Urls';
+import Orientation from 'react-native-orientation-locker';
+import { IconLogout } from '../components/Icons/IconLogout';
 // import AnalogSwitch from '../components/AnalogSwitch';
 
 const HTML = `
@@ -77,17 +77,17 @@ const stopSession = async () => {
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
   export default function App() {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [isSportActive, setIsSportActive] = useState(false);
     const [isSessionActive, setIsSessionActive] = useState(false);
     const [controllerType, setControllerType] = useState(1);
-    const [voiceActive, setIsVoiceActive] = useState(false);
+    const [driveAutoMode, setDriveAutoMode] = useState(false);
 
     /**
      * Toogle session
      */
     const toogleSession = async () => {
       try {
-        console.log("SEssion toggle", isSessionActive)
         if (isSessionActive) {
           await stopSession();
           setIsSessionActive(false);
@@ -102,10 +102,18 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
     /**
      * Load Sport Mode
      */
-    const loadSportMode = async() => {
-      const selectedMode = await AsyncStorage.getItem('selectedMod');
-      setIsSportActive(selectedMode !== null ? Boolean(selectedMode) : false);
+    const loadDriveAutoMode = async() => {
+      const selectedMode = await AsyncStorage.getItem('driveAutoMode');
+      console.log("Drive Mode", selectedMode);
+      setDriveAutoMode(selectedMode);
     }
+       /**
+     * Load Sport Mode
+     */
+       const loadSportMode = async() => {
+        const selectedMode = await AsyncStorage.getItem('selectedMod');
+        setIsSportActive(selectedMode !== null ? Boolean(selectedMode) : false);
+      }
     /**
      * Load controller type
      */
@@ -119,17 +127,27 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
      */
     const toggleSportMode = async() => {
       setIsSportActive(!isSportActive);
-      setIsSportActive(current => {
-        console.log(current);
-        return current;
-      } )
       await AsyncStorage.setItem('selectedMod', JSON.stringify(!isSportActive));
     };
+     /**
+     * toogle sportMode
+     */
+     const toogleDriveAutoMode = async() => {
+      setDriveAutoMode(!driveAutoMode);
+      await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!driveAutoMode));
+    };
+    const onExitPress = async() => {
+      if(isSessionActive) toogleSession();
+      navigation.goBack();
+    }
   /**
  * Use Effect
  * Start manual session
  */
 useEffect(() => {
+    // Lock orientation to landscape when component mounts
+  Orientation.lockToLandscapeRight();
+  loadDriveAutoMode();
   loadSportMode();
   loadControllerType();
 
@@ -137,12 +155,19 @@ useEffect(() => {
     // stop session
     setIsSessionActive(false);
     stopSession();
+    Orientation.lockToPortrait();
     console.log('Session stopped and component unmounted.');
   };
 }, []);
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.buttonContainer}>
+      <TouchableOpacity
+      style={styles.exitButton}
+        onPress={onExitPress}
+      >
+        <IconLogout color='red' size={20}/>
+        </TouchableOpacity>
       <TouchableOpacity
         onPress={toogleSession}
         style={[
@@ -152,6 +177,17 @@ useEffect(() => {
         ]}
       >
         <Text style={styles.buttonText}>E</Text>
+      </TouchableOpacity>
+      <Text>{driveAutoMode}</Text>
+      <TouchableOpacity
+        onPress={toogleDriveAutoMode}
+        style={[
+          styles.deactiveSportButton,
+          driveAutoMode && styles.activeSportButton,
+          { zIndex: 1 } // Apply green shadow when active
+        ]}
+      >
+        <Text style={styles.buttonText}>A</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={toggleSportMode}
@@ -184,7 +220,7 @@ useEffect(() => {
             <JoystickCamera />
     
       </View>
-      </View>
+      </SafeAreaView>
   );
 }
 
@@ -234,6 +270,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,  // Basic elevation
+  },
+  exitButton: {
+    zIndex: 1
   },
   activeSportButton: {
     height: 40,

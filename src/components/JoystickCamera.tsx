@@ -11,10 +11,6 @@ const JoystickCamera: React.FC = () => {
   const [yvalue, setYValue] = useState(90);
   const [isSportActive, setIsSportActive] = useState(false);
   const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-    // Toggle button state
-    const toggleSportMode = () => {
-      setIsSportActive(!isSportActive);
-    };
   
   useEffect(() => {   
     
@@ -57,8 +53,6 @@ const JoystickCamera: React.FC = () => {
     };
   
   useEffect(() => {
-    console.log('X Value:', xvalue);
-    console.log('Y Value:', yvalue);
     sendPayload({ cmd: 3, x: xvalue, y: yvalue });
   }
     , [xvalue, yvalue]);
@@ -66,7 +60,7 @@ const JoystickCamera: React.FC = () => {
     <View style={styles.container}>
      
      <View style={styles.topContainer}>
-        <Text style={styles.textContainer}>Camera</Text>
+        {/* <Text style={styles.textContainer}>Camera</Text> */}
         </View>
           <Slider
         style={styles.sliderContainer}
@@ -79,7 +73,7 @@ const JoystickCamera: React.FC = () => {
         thumbTintColor={Colors.light.primaryGreen}
 />
       <Slider
-  style={{width: 200, height: 40}}
+  style={{width: 150, height: 40}}
   minimumValue={30}
         maximumValue={130}
         value={xvalue}
@@ -108,7 +102,7 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     transform: [{ rotate: '90deg' }],
-    width: 200, height: 40,// Rotate the slider 90 degrees
+    width: 150, height: 40,// Rotate the slider 90 degrees
     justifyContent: 'center',
     alignItems: 'center',
   },
