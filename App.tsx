@@ -7,7 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DriveManually from './src/screens/driveManually';
 import MyTripsData from './src/screens/myTripsData';
-import TripGraphs from './src/screens/TripGRaphs';
+import TripGraphs from './src/screens/TripGraphs';
 
 export type RootStackParamList = {
   SplashScreen: undefined;
