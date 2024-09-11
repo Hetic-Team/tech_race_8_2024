@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CAMERA_URL } from '../constants/Urls';
 import Orientation from 'react-native-orientation-locker';
 import { IconLogout } from '../components/Icons/IconLogout';
+import Sound from 'react-native-sound';
 // import AnalogSwitch from '../components/AnalogSwitch';
 
 const HTML = `
@@ -82,6 +83,23 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
     const [isSessionActive, setIsSessionActive] = useState(false);
     const [controllerType, setControllerType] = useState(1);
     const [driveAutoMode, setDriveAutoMode] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
+    // Load the sound file (local)
+  const playSound = () => {
+    Sound.setCategory('Playback');
+    console.log("play sound")
+    const sound = new Sound(require('../assets/sounds/startup.mp3'), Sound.MAIN_BUNDLE, (error) => {
+      if (error) {
+        console.log('Failed to load the sound', error);
+        return;
+      }
+
+      // Play the sound
+      sound.play(() => {
+        // sound.release(); // Release when the sound is finished
+      });
+    });
+  };
 
     /**
      * Toogle session
@@ -147,6 +165,8 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 useEffect(() => {
     // Lock orientation to landscape when component mounts
   Orientation.lockToLandscapeRight();
+  setIsPlaying(!isPlaying);
+  playSound();
   loadDriveAutoMode();
   loadSportMode();
   loadControllerType();
