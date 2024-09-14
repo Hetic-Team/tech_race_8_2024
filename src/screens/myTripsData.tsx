@@ -1,7 +1,7 @@
 import {Colors} from '../constants/Colors';
 import React,  {useEffect, useState, useRef} from 'react';
 import {CircleArrowLeft, ChartColumn, ChartArea, ChartNoAxesCombined} from 'lucide-react-native';
-import {View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 //import Video, {VideoRef} from 'react-native-video';
 import PressableButton from '../components/PressableButton'
@@ -194,7 +194,7 @@ const MyTripsData = () =>  {
       );
 
   return (
-    <View style={{ flex: 1, rowGap:2, backgroundColor:Colors.dark.mainBackground, paddingVertical:20 }}>
+    <SafeAreaView style={{ flex: 1, rowGap:2, backgroundColor:Colors.dark.mainBackground, paddingVertical:20 }}>
         <View style={[styles.container, {flexDirection: "row", columnGap: 20}]}>
             <PressableButton
               css={{backgroundColor:Colors.light.primaryGreen, maxWidth: 30, alignItems: "center", justifyContent: "center"}}
@@ -249,7 +249,7 @@ const MyTripsData = () =>  {
         />
         </View>)}
 
-    </View>
+    </SafeAreaView>
 
   )
 

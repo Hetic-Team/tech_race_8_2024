@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import {Text, StyleSheet, View} from 'react-native';
+import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
 import {Colors} from '../constants/Colors';
 import {
   widthPercentageToDP as wp,
@@ -13,11 +13,11 @@ type ButtonProps = {
 
 export function Button(props: ButtonProps) {
   return (
-    <View>
+    <TouchableOpacity>
       <Text style={styles.button} onPress={props.onClick}>
         {props.label}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 

@@ -1,7 +1,7 @@
 import Button from '../components/Button';
 import {Colors} from '../constants/Colors';
-import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React , { useEffect } from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -9,7 +9,9 @@ import {
 import {useRoute, RouteProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../App';
 import {useNavigation} from '@react-navigation/native';
+import { IconLogout } from '../components/Icons/IconLogout';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import Orientation from 'react-native-orientation-locker';
 
 type HomePageRouteProp = RouteProp<RootStackParamList, 'HomePage'>;
 
@@ -35,15 +37,26 @@ export default function HomePage() {
     navigation.navigate('MyTripsData');
   };
 
+useEffect(() => {
+  // Lock orientation to landscape when component mounts
+  Orientation.lockToPortrait();
+
+  // Unlock orientation when component unmounts
+  return () => {
+    Orientation.unlockAllOrientations();
+  };
+}, []);
+
+
   return (
-    <View style={styles.container}>
-        <View style={[{flex:1, flexDirection:"column", justifyContent:"center", alignItems:"center", rowGap:30}]}>
+    <SafeAreaView style={styles.container}>
+      <View style={[{flex:1, flexDirection:"column", justifyContent:"center", alignItems:"center", rowGap:30}]}>
       <Button label="Drive" onClick={handleDriveManually} />
       <Button label="My Trips" onClick={handleTripsData} />
    
       <Button label="Modes" onClick={handleSetting} />
-      </View>  
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -74,5 +87,5 @@ const styles = StyleSheet.create({
   vehicleIP: {
     color: '#ffffff',
     fontSize: 20,
-  },
+  }
 });
