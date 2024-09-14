@@ -157,7 +157,7 @@ const MyTripsData = () =>  {
             </View>
             <Video
               controls={true}
-              source={{uri:  url}}
+              source={{uri:  url ? url : 'https://videos.pexels.com/video-files/1437396/1437396-uhd_2560_1440_24fps.mp4'}}
               ref={videoRef}
               style={[styles.backgroundVideo]} />
           </View>

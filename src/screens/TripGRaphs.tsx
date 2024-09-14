@@ -1,4 +1,4 @@
-import {Colors} from '../constants/Colors';
+import { Colors } from '../constants/Colors';
 import React from 'react';
 import {CircleArrowLeft, Frown} from 'lucide-react-native';
 import {View, Text, StyleSheet, ActivityIndicator, ScrollView, Button} from 'react-native';
