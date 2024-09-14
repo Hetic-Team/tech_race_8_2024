@@ -7,7 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DriveManually from './src/screens/driveManually';
 import MyTripsData from './src/screens/myTripsData';
-import TripGraphs from './src/screens/TripGraphs';
+
 
 export type RootStackParamList = {
   SplashScreen: undefined;
@@ -34,7 +34,7 @@ export default function App() {
         <Stack.Screen name="HomePage" component={HomePage} />
         <Stack.Screen name="MoreInfo" component={VehicleData} />
         <Stack.Screen name="MyTripsData" component={MyTripsData} />
-        <Stack.Screen name="TripGraphs" component={TripGraphs} />
+        {/*<Stack.Screen name="TripGraphs" component={TripGraphs} />*/}
         <Stack.Screen name="DriveManually" component={DriveManually} />
         <Stack.Screen name="Setting" component={Setting} />
       </Stack.Navigator>

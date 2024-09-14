@@ -51,6 +51,25 @@ Vous ne pouvez utiliser l'app mobile que si vous avez déjà installé et démar
 
 >**Note**: Vous devez avoir complétez ces étapes avant d'en lire plus : [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) (Jusqu'à "Creating a new application").
 
+## Constantes
+
+Mettre à jour le fichier `src/constants/Urls.ts` : 
+
+Pour vos tests vous pouvez utiliser nos routes api wirelock : [!Accés racine](https://9g526.wiremockapi.cloud/)
+
+Pour les routes liées à la voiture vous devez identifier vos propres IP ou domaines.
+
+Voici les constantes avec la route api de test pour la récupération des informations : 
+
+```ts
+    export const BASE_URL = '192.168.16.10';
+    export const CAMERA_URL = 'http://192.168.16.207:8080/';
+    export const INFO_URL = 'https://9g526.wiremockapi.cloud/sessions/info';
+    export const AUTO_PILOT = 'http://10.0.2.2/sessions/start/1'
+    // Si utilisation du réseau de Justin: http://192.168.87.82
+    export const SESSION_URL = '192.168.16.82:9000';
+```
+
 ## 1: Installation des dépendances
 
 **1.1 Dans Android Studio :** 

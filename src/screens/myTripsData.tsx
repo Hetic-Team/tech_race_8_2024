@@ -169,7 +169,7 @@ const MyTripsData = () =>  {
           </View>
           <TouchableOpacity style={[{paddingVertical:15, paddingHorizontal:10}]} onPress={() => navigation.navigate('TripGraphs', {tripId: session_id})}>
             <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]} >{start_date} - {end_date}</Text>
-            <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]}>{time} {session_id}</Text>
+            <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]}>{time} </Text>
             <Text style={[{fontSize:16, fontWeight: "bold", textAlign:"center", color:Colors.dark.mainBackground, fontStyle: 'italic'}]}>Duration: {formatDuration(duration)}</Text>
             {hasStats ?
             (<View style={[{columnGap:10, flexDirection:"row", alignItems:"center", justifyContent:"center", paddingVertical:10}]}>
@@ -262,8 +262,6 @@ let TEXT_COLOR = "#ECDBBA"; //D8E9A8
 var styles = StyleSheet.create({
 
   cardWrapper: {},
-
-
   navContainer: {
     flex: 1,
     flexDirection: 'row',
