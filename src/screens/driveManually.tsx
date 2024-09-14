@@ -208,7 +208,8 @@ useEffect(() => {
             <JoystickPad key={isSportActive ? 'sport' : 'normal'} isSportMode={isSportActive} />
           ) : controllerType == 2 ? (
             <ArrowPad key={isSportActive ? 'sport' : 'normal'} isSportMode={isSportActive} />
-          ) : <VoiceControl onActivationChange={setIsVoiceActive} />
+          ) : <View/>
+          // : <VoiceControl onActivationChange={setIsVoiceActive} />
           }
         </View>
 
