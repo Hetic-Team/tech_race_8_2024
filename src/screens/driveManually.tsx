@@ -17,6 +17,8 @@ import { IconLogout } from '../components/Icons/IconLogout';
 import CarDoorEffect from '../components/CarDoorEffect';
 import { calculateSpeedInMph } from '../services/MovementService';
 import SpeedView from '../components/SpeedView';
+import SoundPlayer from 'react-native-sound-player'
+
 // import AnalogSwitch from '../components/AnalogSwitch';
 
 const HTML = `<!DOCTYPE html>
@@ -85,7 +87,10 @@ export default function App() {
   const [isDoorVisible, setIsDoorVisible] = useState(true); // State for car door effect
   const [currentSpeed, setCurrentSpeed] = useState<number>(0);
   const [onCompleteDoor, setOnCompleteDoor] = useState<Boolean>(false);
-2
+      // Load the sound file (local)
+  const playSound = () => {
+        SoundPlayer.playAsset(require('../assets/sounds/startup3.mp3'))
+  };
   const toogleSession = async () => {
     try {
       if (isSessionActive) {
@@ -146,6 +151,7 @@ export default function App() {
 
   useEffect(() => {
     Orientation.lockToLandscapeRight();
+    playSound();
     loadDriveAutoMode();
     loadSportMode();
     loadControllerType();
@@ -157,6 +163,7 @@ export default function App() {
 
     return () => {
       setIsSessionActive(false);
+      SoundPlayer.stop();
       stopSession();
       Orientation.lockToPortrait();
       console.log('Session stopped and component unmounted.');
