@@ -10,6 +10,8 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Svg, { Path } from 'react-native-svg';
 import Orientation from 'react-native-orientation-locker';
+import axios from 'axios';
+import { SESSION_URL } from '../constants/Urls';
 
 export default function HomePage() {
 
@@ -36,6 +38,18 @@ useEffect(() => {
   // Lock orientation to landscape when component mounts
   Orientation.lockToPortrait();
 
+ const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://${SESSION_URL}/stream/start`);
+      console.log("Manual Session Connected");
+      return response.data;
+    } catch (error) {
+      console.error((error as any).toString());
+      throw error;
+    }
+  }
+
+  fetchData();
   // Unlock orientation when component unmounts
   return () => {
     Orientation.unlockAllOrientations();
