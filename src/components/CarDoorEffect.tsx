@@ -1,25 +1,28 @@
 // CarDoorEffect.tsx
 import React, { useRef, useEffect, useState } from 'react';
 import { View, Animated, StyleSheet, Dimensions } from 'react-native';
+import { Colors } from '../constants/Colors';
 
 const { width } = Dimensions.get('window');
-
-const CarDoorEffect: React.FC<{ isVisible: boolean }> = ({ isVisible }) => {
+type CarDoorEffectProps = {
+    isVisible: boolean;
+    onComplete: () => void; // Callback function prop
+  };
+const CarDoorEffect: React.FC<CarDoorEffectProps> = (props) => {
   const doorWidth = useRef(new Animated.Value(width / 2)).current;
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
 
   useEffect(() => {
     Animated.timing(doorWidth, {
-      toValue: isVisible ? 0 : width / 2,
-      duration: 2000, // Adjust this value for slower or faster animation
+      toValue: props.isVisible ? 0 : width / 2,
+      duration: 3000, // Adjust this value for slower or faster animation
       useNativeDriver: false,
     }).start(() => {
       // Callback when animation completes
-      console.log("dasds")
-      setIsAnimationComplete(!isVisible);
-      console.log  (isAnimationComplete)
+      setIsAnimationComplete(!props.isVisible);
+      props.onComplete();
     });
-  }, [isVisible]);
+  }, [props.isVisible]);
 
   return (
     <View style={styles.container}>
@@ -52,7 +55,7 @@ const styles = StyleSheet.create({
   door: {
     position: 'absolute',
     top: 0,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.light.primaryGreen,
     height: '100%',
   },
 });

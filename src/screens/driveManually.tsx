@@ -84,6 +84,7 @@ export default function App() {
   const [driveAutoMode, setDriveAutoMode] = useState(false);
   const [isDoorVisible, setIsDoorVisible] = useState(true); // State for car door effect
   const [currentSpeed, setCurrentSpeed] = useState<number>(0);
+  const [onCompleteDoor, setOnCompleteDoor] = useState<Boolean>(false);
 2
   const toogleSession = async () => {
     try {
@@ -132,11 +133,16 @@ export default function App() {
     setDriveAutoMode(newMode);
     await AsyncStorage.setItem('driveAutoMode', JSON.stringify(newMode));
   };
+  const onCompleteOpenDoor = async () => {
+    setOnCompleteDoor(true);
+  };
 
   const onExitPress = async () => {
     if (isSessionActive) await toogleSession();
     navigation.goBack();
   };
+
+
 
   useEffect(() => {
     Orientation.lockToLandscapeRight();
@@ -159,7 +165,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <CarDoorEffect isVisible={isDoorVisible} /> */}
+      {!onCompleteDoor?<CarDoorEffect isVisible={isDoorVisible} onComplete={onCompleteOpenDoor}/>:<View/>}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.exitButton}
