@@ -1,13 +1,14 @@
 import Button from '../components/Button';
 import {Colors} from '../constants/Colors';
 import React , { useEffect } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image} from 'react-native';
 import {
   widthPercentageToDP as wp
 } from 'react-native-responsive-screen';
 import {RootStackParamList} from '../../App';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import Svg, { Path } from 'react-native-svg';
 import Orientation from 'react-native-orientation-locker';
 
 export default function HomePage() {
@@ -44,12 +45,12 @@ useEffect(() => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={[{flex:1, flexDirection:"column", justifyContent:"center", alignItems:"center", rowGap:30}]}>
-      <Button label="Drive Manually" onClick={handleDriveManually} />
-      <Button label="Autopilot" onClick={handleDriveAuto} />
-      <Button label="My Trips" onClick={handleTripsData} />
-   
-      <Button label="Modes" onClick={handleSetting} />
+      <View style={[{flex: 1, flexDirection: "column", justifyContent: "center", alignItems: "center", rowGap: 30}]}>
+        <Button label="Drive Manually" onClick={handleDriveManually}/>
+        <Button label="Autopilot" onClick={handleDriveAuto}/>
+        <Button label="My Trips" onClick={handleTripsData}/>
+
+        <Button label="Modes" onClick={handleSetting}/>
       </View>
     </SafeAreaView>
   );
@@ -82,5 +83,9 @@ const styles = StyleSheet.create({
   vehicleIP: {
     color: '#ffffff',
     fontSize: 20,
+  },
+  centeredContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
