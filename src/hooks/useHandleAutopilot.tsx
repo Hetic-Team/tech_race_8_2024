@@ -22,6 +22,7 @@ export default function useHandleAutopilot() {
             const response = await fetch(url);
             const json = await response.json();
             if(json.status === "success") {
+
                 setMessageAutoPilot(json);
                 setLoading(false)
             } else {
@@ -29,12 +30,9 @@ export default function useHandleAutopilot() {
                 setLoading(false)
             }
 
-            console.log('message', json)
-            console.log("loading state", isAutoLoading)
         } catch (error) {
             setError('Error fetching autopilot data to start autopilot');
             setLoading(false);
-            console.error('start autopilot failed: ', error);
         } finally {
             setLoading(false);
         }

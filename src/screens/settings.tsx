@@ -20,24 +20,24 @@ export default function Setting() {
   const { setAutoPilot, messageAutoPilot, makeAutopilot, isAutoLoading } = useHandleAutopilot()
   const [isAutoMode, setIsAutoMode] = useState<string>("")
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
 
   const controlList = [
     {
       idControl: 1,
       label: 'Joystick',
-      icon: messageAutoPilot.autopilot ? IconDisabled : IconJoystick,
+      icon: messageAutoPilot.autopilot === "1" ? IconDisabled : IconJoystick,
     },
     {
       idControl: 2,
       label: 'Arrow',
-      icon: messageAutoPilot.autopilot ? IconDisabled :IconArrowJoystick,
+      icon: messageAutoPilot.autopilot === "1" ? IconDisabled :IconArrowJoystick,
     },
     {
       idControl: 3,
       label: 'Voice',
-      icon: messageAutoPilot.autopilot ? IconDisabled : IconVoice,
+      icon: messageAutoPilot.autopilot === "1" ? IconDisabled : IconVoice,
     },
   ];
   const showSnackbar = (message: string) => {
@@ -162,16 +162,16 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
               return (
                 <TouchableOpacity 
                   key={control.idControl}
-                  disabled={!!messageAutoPilot.autopilot}
-                  style={messageAutoPilot.autopilot ? styles.joystickInactiveCard : makeCardStyles(selectedControl === control.idControl) }
+                  disabled={messageAutoPilot.autopilot === "1"}
+                  style={messageAutoPilot.autopilot === "1" ? styles.joystickInactiveCard : makeCardStyles(selectedControl === control.idControl) }
                   onPress={() => handleSelectControl(control.idControl)}
                 >
                   <IconComponent
                     size={50} 
-                    color={messageAutoPilot.autopilot ? Colors.dark.placeholder :  makeIconCardStyles(selectedControl === control.idControl)}
+                    color={messageAutoPilot.autopilot === "1" ? Colors.dark.placeholder :  makeIconCardStyles(selectedControl === control.idControl)}
                   />
                   <Text 
-                    style={messageAutoPilot.autopilot ? styles.settingsText : makeTextCardStyles(selectedControl === control.idControl) }
+                    style={messageAutoPilot.autopilot === "1" ? styles.settingsText : makeTextCardStyles(selectedControl === control.idControl) }
                   >
                     {control.label.toUpperCase()}
                   </Text>
@@ -184,7 +184,7 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
           <Text style={styles.settingsLabel}>Mods :</Text>
           <View style={styles.modsSettingsContainer}>
             <Text style={styles.settingsText}>{isAutoLoading ? 'loading...' : messageAutoPilot.message} </Text>
-          <View style={styles.rowModsSettings}>
+            <View style={styles.rowModsSettings}>
               <Text style={styles.settingsText}>Auto Mode</Text>
               <SwitchButton isActive={makeAutopilot} onClick={toggleDriveMode} />
             </View>
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     height: 150,
   },
   snackbar: {
-    backgroundColor: Colors.dark.warning, // Customize as needed
+    backgroundColor: Colors.dark.warning,
     color: 'white',
   },
 });

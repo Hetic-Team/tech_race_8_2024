@@ -137,7 +137,6 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <CarDoorEffect isVisible={isDoorVisible} /> */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.exitButton}
