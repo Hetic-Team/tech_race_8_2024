@@ -3,14 +3,10 @@ import React,  {useEffect, useState, useRef} from 'react';
 import {CircleArrowLeft, ChartColumn, ChartArea, ChartNoAxesCombined} from 'lucide-react-native';
 import {View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Video, {VideoRef} from 'react-native-video';
 import PressableButton from '../components/PressableButton'
 import {RootStackParamList} from '../../App';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import useGetTripData from '../hooks/useGetTripData'
-import { AdvancedVideo } from 'cloudinary-react-native';
-import { Cloudinary } from "@cloudinary/url-gen";
-
 
   type Media = {
     url: string, 
@@ -43,7 +39,6 @@ const MyTripsData = () =>  {
     
     const tripsData = raceData.filter(item => item.videos.video_urls.length > 0 && parseInt(item.duration) > 0)
 
-    const videoRef = useRef<VideoRef>(null);
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     let medias: Media[] = []
     let sessions: Array<number> = []
@@ -72,7 +67,6 @@ const MyTripsData = () =>  {
         }
       })
 
-      console.log(medias)
       const [activeData, setActiveData] = useState<Media[]>(medias)
 
       useEffect(() => {
