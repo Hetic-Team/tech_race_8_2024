@@ -149,7 +149,7 @@ export default function Setting() {
               return (
                 <TouchableOpacity 
                   key={control.idControl}
-                  disabled={messageAutoPilot.message === 'session started' || messageAutoPilot.message === 'A session is already active'}
+                  disabled={!!messageAutoPilot.autopilot}
                   style={autoPilotActive ? styles.joystickInactiveCard : makeCardStyles(selectedControl === control.idControl) }
                   onPress={() => handleSelectControl(control.idControl)}
                 >
