@@ -16,7 +16,12 @@ export default function Setting() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [selectedControl, setSelectedControl] = useState(1);
+  const [isSportModSelected ,setIsSportModSelected] = useState(false);
 
+  /**
+   * controller types object
+   */
   const controlList = [
     {
       idControl: 1,
@@ -34,13 +39,15 @@ export default function Setting() {
       icon: IconVoice,
     }
   ];
-
+  /**
+   * Show snackbar
+   * @param message
+   */
   const showSnackbar = (message: string) => {
     setSnackbarMessage(message);
     setSnackbarVisible(true);
   };
-  const [selectedControl, setSelectedControl] = useState(1);
-  const [isSportModSelected ,setIsSportModSelected] = useState(false);
+
 
   const handleBack = () => {
     navigation.goBack();
@@ -98,7 +105,9 @@ export default function Setting() {
         console.error('Failed to load state from AsyncStorage', e);
       }
     };
+    // load on select controller
     loadSelectedControl();
+    // load is sport mode
     loadSportModState();
   }, []);
 

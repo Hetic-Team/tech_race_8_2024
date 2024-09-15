@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-import {Colors} from '../constants/Colors';
 import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import Button from '../components/Button';

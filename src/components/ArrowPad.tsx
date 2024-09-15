@@ -4,16 +4,15 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { BASE_URL } from '../constants/Urls';
 import { getForwardsPayload, getBackwardsPayload, getLeftPayload, getRightPayload, getStopPayload, getCameraOnPayload} from '../services/MovementService';
 const ArrowPad = ({isSportMode}: { isSportMode: boolean }) => {
-      const [ws, setWs] = useState<WebSocket | null>(null);
+  const [ws, setWs] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
   /**
-     * Get the payload for the camera to turn on
-     */
+   * Turn on the camera
+   */
   const cameraOn = () => {
     const cameraCommandOn = getCameraOnPayload();
     sendPayload(cameraCommandOn);
-    
-}
+  }
   useEffect(() => {
     const socket = new WebSocket(`ws://${BASE_URL}/ws`);
     socket.onopen = () => {
@@ -40,27 +39,23 @@ const ArrowPad = ({isSportMode}: { isSportMode: boolean }) => {
     };
   }, []);
 
-  // const [input, setInput] = useState('');
-
-  // const sendMessage = () => {
-  //   if (ws && input) {
-  //     ws.send(input);
-  //     setMessages(prevMessages => [...prevMessages, `You: ${input}`]);
-  //     setInput('');
-  //   }
-  // };
-
+  /**
+   * Send payload
+   * @param payload 
+   */
   const sendPayload = (payload: any ) => {
-
     if (ws) {
       ws.send(JSON.stringify(payload));
       setMessages(prevMessages => [...prevMessages, `You: ${JSON.stringify(payload)}`]);
     }
   };
 
+  /**
+   * Direction of the vechicle
+   * @param type 
+   */
   const sendDirectionToAPI = async (type: Number) => {
     try {
-      console.log('Sending direction to API:', type);
       let speed = isSportMode? 4000:1000
       if(type == 0) sendPayload(getStopPayload());
       else if (type == 1) {
@@ -73,7 +68,10 @@ const ArrowPad = ({isSportMode}: { isSportMode: boolean }) => {
       console.log('Error sending direction to API:', error);
     }
   };
-
+  /**
+   * Handle on press movement
+   * @param e 
+   */
     const handleButtonPress = (e: any) => {
         sendDirectionToAPI(e);
 

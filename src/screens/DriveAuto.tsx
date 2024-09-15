@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View, Dimensions,TouchableOpacity} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, View, Dimensions,TouchableOpacity} from 'react-native';
 import { WebView } from 'react-native-webview';
 import JoystickCamera from '../components/JoystickCamera';
 import { Colors } from '../constants/Colors';
@@ -7,20 +7,17 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import ActionHelper from '../services/ActionHelper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CAMERA_URL } from '../constants/Urls';
 import Orientation from 'react-native-orientation-locker';
 import { IconLogout } from '../components/Icons/IconLogout';
-import useHandleAutopilot from "../hooks/useHandleAutopilot";
 import {AUTO_PILOT, AUTO_PILOT_STOP} from "../constants/Urls";
 
-const startManualSession = async () => {
-    try {
-        await ActionHelper.startManualSession();
-    } catch (error) {
-        console.log('Error starting manual session:', error);
-    }
-}
+// Get screen dimensions
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+/**
+ * Stop session
+ */
 const stopSession = async () => {
     try {
         await ActionHelper.stopSession();
@@ -30,10 +27,6 @@ const stopSession = async () => {
     }
 }
 
-
-
-// Get screen dimensions
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 type Autopilot = {
     status: string,
@@ -50,7 +43,6 @@ export default function DriveAuto() {
     const [messageAutoPilot, setMessageAutoPilot] = useState<Autopilot>({status: "", autopilot: "", message: "", recording: ""});
     const [error, setError] = useState<string | null>(null);
 
-    console.log(messageAutoPilot)
     /**
      * Toogle session
      */
@@ -60,7 +52,6 @@ export default function DriveAuto() {
                 await stopSession();
                 setIsSessionActive(false);
             } else {
-                await startManualSession();
                 setIsSessionActive(true);
             }
         } catch (e) {
@@ -76,6 +67,9 @@ export default function DriveAuto() {
         console.log(controllerType);
     }
 
+    /**
+     * On exit
+     */
     const onExitPress = async() => {
         if(isSessionActive) toogleSession();
         navigation.goBack();
@@ -87,7 +81,9 @@ export default function DriveAuto() {
     useEffect(() => {
         // Lock orientation to landscape when component mounts
         Orientation.lockToLandscapeRight();
-
+        /**
+         * Start auto pilot
+         */
         const getAutoPilot = async () => {
             try {
                 setLoading(true)
@@ -108,7 +104,7 @@ export default function DriveAuto() {
                 setLoading(false);
             }
         }
-
+        // run auto pilot
         getAutoPilot()
         loadControllerType();
 

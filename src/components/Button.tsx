@@ -23,14 +23,6 @@ export function Button(props: ButtonProps) {
 
 const styles = StyleSheet.create({
   button: {
-    /*flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.light.primaryGreen, 
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,*/
     fontSize: hp(3),
     backgroundColor: Colors.light.primaryGreen,
     textAlign: 'center',

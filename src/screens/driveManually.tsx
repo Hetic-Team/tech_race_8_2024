@@ -58,7 +58,9 @@ const HTML = `<!DOCTYPE html>
     </div>
 </body>
 </html>`;
-
+/**
+ * Start mannual session
+ */
 const startManualSession = async () => {
   try {
     await ActionHelper.startManualSession();
@@ -66,7 +68,9 @@ const startManualSession = async () => {
     console.log('Error starting manual session:', error);
   }
 };
-
+/**
+ * stop session
+ */
 const stopSession = async () => {
   try {
     await ActionHelper.stopSession();
@@ -83,7 +87,6 @@ export default function App() {
   const [isSportActive, setIsSportActive] = useState(false);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [controllerType, setControllerType] = useState(1);
-  const [driveAutoMode, setDriveAutoMode] = useState(false);
   const [isDoorVisible, setIsDoorVisible] = useState(true);
   const [currentSpeed, setCurrentSpeed] = useState<number>(0);
   const [onCompleteDoor, setOnCompleteDoor] = useState<Boolean>(false);
@@ -93,6 +96,9 @@ export default function App() {
         SoundPlayer.playAsset(require('../assets/sounds/startup3.mp3'))
   };
 
+  /**
+   * Toogle session
+   */
   const toogleSession = async () => {
     try {
       if (isSessionActive) {
@@ -107,10 +113,13 @@ export default function App() {
     }
   };
 
+  /**
+   * On speed change
+   * @param speed 
+   */
   const handleSpeedChange = (speed: number) => {
     const derrivedspeed = calculateSpeedInMph(speed);
     setCurrentSpeed(Number(derrivedspeed.toFixed(2)));
-    console.log("Speed from JoystickPad:", derrivedspeed);
   };
 
   const loadSportMode = async () => {
@@ -147,14 +156,9 @@ export default function App() {
     loadSportMode();
     loadControllerType();
     
-    // Hide doors after a delay for demo purposes
-    // const timer = setTimeout(() => {
-    //   setIsDoorVisible(false);
-    // }, 3000); // Adjust timing as needed
-
     return () => {
       setIsSessionActive(false);
-      SoundPlayer.stop();
+      SoundPlayer.stop(); // stop the sound
       stopSession();
       Orientation.lockToPortrait();
       console.log('Session stopped and component unmounted.');

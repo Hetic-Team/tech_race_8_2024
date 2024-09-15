@@ -60,7 +60,6 @@ const JoystickCamera: React.FC = () => {
     <View style={styles.container}>
      
      <View style={styles.topContainer}>
-        {/* <Text style={styles.textContainer}>Camera</Text> */}
         </View>
           <Slider
         style={styles.sliderContainer}

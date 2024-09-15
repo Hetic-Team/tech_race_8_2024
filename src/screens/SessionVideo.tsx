@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View, Dimensions,TouchableOpacity} from 'react-native';
+import React, { useEffect } from 'react';
+import {SafeAreaView, StyleSheet, View, Dimensions,TouchableOpacity} from 'react-native';
 import { WebView } from 'react-native-webview';
-import JoystickCamera from '../components/JoystickCamera';
-import VoiceControl from '../components/VoiceCommands';
+
 import { Colors } from '../constants/Colors';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
-import ArrowPad from '../components/ArrowPad';
-import ActionHelper from '../services/ActionHelper';
-import JoystickPad from '../components/JoystickPad';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CAMERA_URL } from '../constants/Urls';
+
 import Orientation from 'react-native-orientation-locker';
 import { IconLogout } from '../components/Icons/IconLogout';
 // import AnalogSwitch from '../components/AnalogSwitch';
@@ -32,7 +27,6 @@ export default function SessionVideo() {
         cloudinary_id = "ride_drwnz7"
     }
 
-   console.log(cloudinary_id)
     const onExitPress = async() => {
         navigation.goBack();
     }

@@ -1,14 +1,13 @@
 import Button from '../components/Button';
 import {Colors} from '../constants/Colors';
 import React , { useEffect } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image} from 'react-native';
+import {View, StyleSheet, SafeAreaView} from 'react-native';
 import {
   widthPercentageToDP as wp
 } from 'react-native-responsive-screen';
 import {RootStackParamList} from '../../App';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import Svg, { Path } from 'react-native-svg';
 import Orientation from 'react-native-orientation-locker';
 import axios from 'axios';
 import { SESSION_URL } from '../constants/Urls';
