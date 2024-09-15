@@ -37,9 +37,6 @@ export default function HomePage() {
     navigation.navigate('MyTripsData');
   };
 
-  const handleLogout = () => {
-    navigation.navigate('HomePage', {vehicleIP: ""});
-}
 useEffect(() => {
   // Lock orientation to landscape when component mounts
   Orientation.lockToPortrait();
@@ -53,17 +50,12 @@ useEffect(() => {
 
   return (
     <SafeAreaView style={styles.container}>
-        <View style={[{flex:1, flexDirection:"column", justifyContent:"center", alignItems:"center", rowGap:30}]}>
+      <View style={[{flex:1, flexDirection:"column", justifyContent:"center", alignItems:"center", rowGap:30}]}>
       <Button label="Drive" onClick={handleDriveManually} />
       <Button label="My Trips" onClick={handleTripsData} />
    
       <Button label="Modes" onClick={handleSetting} />
       </View>
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>LOGOUT</Text>
-          <IconLogout color="red" size={20}/>
-      </TouchableOpacity>
-     
     </SafeAreaView>
   );
 }
@@ -95,21 +87,5 @@ const styles = StyleSheet.create({
   vehicleIP: {
     color: '#ffffff',
     fontSize: 20,
-  },
-  logoutButton: {
-    marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
-    borderColor: 'red',
-    borderWidth: 1,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-},
-  logoutButtonText:{
-      color: 'red',
-      fontSize: 20,
-  },
+  }
 });
