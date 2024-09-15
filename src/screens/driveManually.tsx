@@ -13,6 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CAMERA_URL } from '../constants/Urls';
 import Orientation from 'react-native-orientation-locker';
 import { IconLogout } from '../components/Icons/IconLogout';
+import useHandleAutopilot from "../hooks/useHandleAutopilot";
+
 
 const HTML = `
 <!DOCTYPE html>
@@ -21,7 +23,6 @@ const HTML = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joystick Control</title>
-    <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.8.1/dist/nipplejs.min.js"></script>
     <style>
         body {
             display: flex;
@@ -30,7 +31,7 @@ const HTML = `
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            background-color: #1C2631; /* Ajout d'une couleur de fond si nécessaire */
+            background-color: #1C2631;
         }
         .iframe-container {
             display: flex;
@@ -40,7 +41,8 @@ const HTML = `
             height: 100%;
         }
         iframe {
-            border: 2px solid green;
+            border: none;
+            border-radius: 10px;
             max-width: 100%;
             max-height: 100%;
         }
@@ -79,7 +81,11 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
     const [isSportActive, setIsSportActive] = useState(false);
     const [isSessionActive, setIsSessionActive] = useState(false);
     const [controllerType, setControllerType] = useState(1);
-    const [driveAutoMode, setDriveAutoMode] = useState(false);
+    const [driveAutoMode, setDriveAutoMode] = useState<boolean>(false);
+
+
+    const { setAutoPilot, messageAutoPilot, makeAutopilot, isAutoLoading } = useHandleAutopilot()
+    console.log('in camera screen', messageAutoPilot)
 
     /**
      * Toogle session
@@ -98,12 +104,18 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
       }
     }
     /**
-     * Load Sport Mode
+     * Load Auto Mode
      */
     const loadDriveAutoMode = async() => {
       const selectedMode = await AsyncStorage.getItem('driveAutoMode');
       console.log("Drive Mode", selectedMode);
-      setDriveAutoMode(selectedMode);
+      setAutoPilot(!makeAutopilot)
+      if(selectedMode) {
+        console.log("selected mode", selectedMode)
+        console.log("makeautopilot", makeAutopilot)
+       setDriveAutoMode(makeAutopilot);
+      }
+
     }
        /**
      * Load Sport Mode
@@ -131,9 +143,20 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
      * toogle sportMode
      */
      const toogleDriveAutoMode = async() => {
-      setDriveAutoMode(!driveAutoMode);
-      await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!driveAutoMode));
+      await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!makeAutopilot));
+      const keys = await AsyncStorage.getAllKeys()
+      console.log('keys from async', keys)
+       try {
+         await AsyncStorage.setItem('autopilotStatus', messageAutoPilot.autopilot)
+       } catch (e) {
+         console.error('Failed to save state autopilotStatus to AsyncStorage', e);
+       }
+
+       setAutoPilot(!makeAutopilot)
     };
+
+
+
     const onExitPress = async() => {
       if(isSessionActive) toogleSession();
       navigation.goBack();
@@ -176,12 +199,11 @@ useEffect(() => {
       >
         <Text style={styles.buttonText}>E</Text>
       </TouchableOpacity>
-      <Text>{driveAutoMode}</Text>
+      <Text style={styles.buttonText}>{isAutoLoading ? 'Loading...' : ''}</Text>
       <TouchableOpacity
         onPress={toogleDriveAutoMode}
         style={[
-          styles.deactiveSportButton,
-          driveAutoMode && styles.activeSportButton,
+          messageAutoPilot.autopilot && !isAutoLoading ? styles.activeSportButton : styles.deactiveSportButton,
           { zIndex: 1 } // Apply green shadow when active
         ]}
       >
@@ -242,30 +264,30 @@ const styles = StyleSheet.create({
   controlContainer: {
     flex: 5,
     backgroundColor: Colors.light.background,
-    flexDirection: 'row', // Align children in a row
-    justifyContent: 'space-between', // Adjust as needed for spacing
-    alignItems: 'center', // Center align vertically
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   camera: {
-    width: screenWidth * 0.3, // Adjust width as needed
-    height: screenHeight, // Adjust height as needed
+    width: screenWidth * 0.3,
+    height: screenHeight,
   },
   webview: {
-    flex: 1, // Take up remaining space
-    height: 100, // Adjust height as needed
+    flex: 1,
+    height: 100,
   },
   pad: {
-    justifyContent: 'center', // Center align vertically
-    alignItems: 'center', // Center align horizontally
-    zIndex: 1, // Place the pad on top of the camera
-    width: screenWidth * 0.3, // Adjust width as needed
-    height: screenHeight, // Adjust height as needed
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+    width: screenWidth * 0.3,
+    height: screenHeight,
   },
   deactiveSportButton: {
     height: 40,
     width:40,
-    borderRadius: 40,  // Make it circular
-    backgroundColor: '#1c1c1e',  // Dark color like a car button (metallic look)
+    borderRadius: 40,
+    backgroundColor: '#1c1c1e',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,  // Basic elevation
@@ -274,13 +296,17 @@ const styles = StyleSheet.create({
     zIndex: 1
   },
   activeSportButton: {
+    borderRadius: 40,
     height: 40,
     width: 40,
-    backgroundColor: '#1c1c1e',  // Keep the car button look
-    shadowColor: '#4CAF50',  // Green shadow around the button
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 20,
+    backgroundColor: Colors.dark.primaryGreen,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: '#1c1c1e',
+    // shadowColor: '#4CAF50',
+    // shadowOffset: { width: 0, height: 0 },
+    // shadowOpacity: 0.8,
+    // shadowRadius: 20,
   },
   buttonText: {
     fontSize: 24,

@@ -13,16 +13,20 @@ export default function useHandleAutopilot() {
     const [isAutoLoading, setLoading] = useState(true);
     const [messageAutoPilot, setMessageAutoPilot] = useState<Autopilot>({status: "", autopilot: "", message: "", recording: ""});
     const [error, setError] = useState<string | null>(null);
-    const [makeAutopilot, setAutoPilot] = useState<boolean>(false)
+    const [makeAutopilot, setAutoPilot] = useState<boolean>(true)
 
     const getAutoPilot = async (url: string) => {
+
         try {
+            setLoading(true)
             const response = await fetch(url);
             const json = await response.json();
             if(json.status === "success") {
                 setMessageAutoPilot(json);
+                setLoading(false)
             } else {
                 setError('There was an error when starting the car')
+                setLoading(false)
             }
 
             console.log('message', json)

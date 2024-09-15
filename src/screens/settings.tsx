@@ -17,6 +17,7 @@ import {messageParent} from "jest-worker";
 export default function Setting() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { setAutoPilot, messageAutoPilot, makeAutopilot, isAutoLoading } = useHandleAutopilot()
+  const [isAutoMode, setIsAutoMode] = useState<string>("")
 
   const controlList = [
     {
@@ -38,7 +39,6 @@ export default function Setting() {
 
   const [selectedControl, setSelectedControl] = useState(1);
   const [isSportModSelected ,setIsSportModSelected] = useState(false);
-  const [isAutoMode ,setIsAutoMode] = useState(false);
 
   const handleBack = () => {
     navigation.goBack();
@@ -55,14 +55,12 @@ export default function Setting() {
     }
   }
   const toggleDriveMode = async () => {
-    //setIsAutoMode(!isAutoMode);
     setAutoPilot(!makeAutopilot)
 
     try {
-      //await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!isAutoMode));
       await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!makeAutopilot));
     } catch (e) {
-      console.error('Failed to save state to AsyncStorage', e);
+      console.error('Failed to save state driveAutoMode to AsyncStorage', e);
     }
   }
   
@@ -122,15 +120,19 @@ export default function Setting() {
 
   console.log('message in settings', messageAutoPilot.message)
 
-  const autoPilotActive =  messageAutoPilot.message === "A session is already active" || messageAutoPilot.message === "session started";
-
   function makeCardStyles(selected: boolean) {
-    if(selected) {
-      return  styles.joystickActiveCard
-    } else {
-      return styles.joystickCard
-    }
+    return  selected ? styles.joystickActiveCard : styles.joystickCard
   }
+
+  function makeTextCardStyles(selected:boolean) {
+    return selected ? styles.activeSettingsText : styles.settingsText
+  }
+
+  function makeIconCardStyles(selected: boolean): string {
+    return selected ? Colors.dark.primaryGreen :  Colors.dark.placeholder
+  }
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -150,15 +152,15 @@ export default function Setting() {
                 <TouchableOpacity 
                   key={control.idControl}
                   disabled={!!messageAutoPilot.autopilot}
-                  style={autoPilotActive ? styles.joystickInactiveCard : makeCardStyles(selectedControl === control.idControl) }
+                  style={messageAutoPilot.autopilot ? styles.joystickInactiveCard : makeCardStyles(selectedControl === control.idControl) }
                   onPress={() => handleSelectControl(control.idControl)}
                 >
                   <IconComponent
                     size={50} 
-                    color={selectedControl === control.idControl ? Colors.dark.primaryGreen : Colors.dark.placeholder}
+                    color={messageAutoPilot.autopilot ? Colors.dark.placeholder :  makeIconCardStyles(selectedControl === control.idControl)}
                   />
                   <Text 
-                    style={selectedControl === control.idControl ? styles.activeSettingsText : styles.settingsText}
+                    style={messageAutoPilot.autopilot ? styles.settingsText : makeTextCardStyles(selectedControl === control.idControl) }
                   >
                     {control.label.toUpperCase()}
                   </Text>
@@ -170,8 +172,7 @@ export default function Setting() {
         <View style={styles.listSettingsContainer}>
           <Text style={styles.settingsLabel}>Mods :</Text>
           <View style={styles.modsSettingsContainer}>
-            <Text style={styles.settingsText}>{messageAutoPilot.message} </Text>
-            <Text style={styles.settingsText}>{isAutoLoading ? 'loading...' : ""}</Text>
+            <Text style={styles.settingsText}>{isAutoLoading ? 'loading...' : messageAutoPilot.message} </Text>
           <View style={styles.rowModsSettings}>
               <Text style={styles.settingsText}>Auto Mode</Text>
               <SwitchButton isActive={makeAutopilot} onClick={toggleDriveMode} />
@@ -268,7 +269,14 @@ const styles = StyleSheet.create({
     height: 150,
   },
   joystickInactiveCard: {
-   width: 10,
-    height: 10
+    borderWidth: 2,
+    borderColor: Colors.dark.errorColor,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 20,
+    width: 150,
+    height: 150,
   }
 });
