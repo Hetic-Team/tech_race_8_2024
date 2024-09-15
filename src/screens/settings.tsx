@@ -10,9 +10,11 @@ import { IconArrowJoystick } from '../components/Icons/IconArrowJoystick';
 import { IconJoystick } from '../components/Icons/IconJoystick';
 import { IconVoice } from '../components/Icons/IconVoice';
 import { SwitchButton } from '../components/SwitchButton';
+import useHandleAutopilot from "../hooks/useHandleAutopilot";
 
 export default function Setting() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { setAutoPilot, messageAutoPilot, makeAutopilot } = useHandleAutopilot()
 
   const controlList = [
     {
@@ -52,6 +54,7 @@ export default function Setting() {
   }
   const toggleDriveMode = async () => {
     setIsAutoMode(!isAutoMode);
+    isAutoMode ? setAutoPilot(true) : setIsAutoMode(false);
 
     try {
       await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!isAutoMode));
@@ -111,7 +114,7 @@ export default function Setting() {
     loadSportModState();
     loadDriveMode();
   }, []);
-  
+  console.log('message in settings', messageAutoPilot.message)
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.navigationContainer}>
@@ -129,7 +132,8 @@ export default function Setting() {
               return (
                 <TouchableOpacity 
                   key={control.idControl}
-                  style={selectedControl === control.idControl ? styles.joystickActiveCard : styles.joystickCard} 
+                  disabled={messageAutoPilot.message === 'session started'}
+                  style={[messageAutoPilot.message === 'session started' ? {backgroundColor: 'grey'} : {}, selectedControl === control.idControl ? styles.joystickActiveCard : styles.joystickCard]}
                   onPress={() => handleSelectControl(control.idControl)}
                 >
                   <IconComponent 

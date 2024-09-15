@@ -72,7 +72,6 @@ const MyTripsData = () =>  {
         }
       })
 
-      console.log(medias)
       const [activeData, setActiveData] = useState<Media[]>(medias)
 
       useEffect(() => {
