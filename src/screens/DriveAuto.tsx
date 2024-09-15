@@ -6,15 +6,13 @@ import { Colors } from '../constants/Colors';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
-import ArrowPad from '../components/ArrowPad';
 import ActionHelper from '../services/ActionHelper';
-import JoystickPad from '../components/JoystickPad';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CAMERA_URL } from '../constants/Urls';
 import Orientation from 'react-native-orientation-locker';
 import { IconLogout } from '../components/Icons/IconLogout';
 import useHandleAutopilot from "../hooks/useHandleAutopilot";
-import VoiceControl from "../components/VoiceCommands.tsx";
+import {AUTO_PILOT, AUTO_PILOT_STOP} from "../constants/Urls";
 
 const startManualSession = async () => {
     try {
@@ -37,16 +35,22 @@ const stopSession = async () => {
 // Get screen dimensions
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
+type Autopilot = {
+    status: string,
+    autopilot: string,
+    message: string,
+    recording: string
+}
+
 export default function DriveAuto() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const [isSportActive, setIsSportActive] = useState(false);
     const [isSessionActive, setIsSessionActive] = useState(false);
     const [controllerType, setControllerType] = useState(1);
-    const [driveAutoMode, setDriveAutoMode] = useState<boolean>(false);
-    const [isVoiceActive, setIsVoiceActive] = useState<boolean>(false)
+    const [isAutoLoading, setLoading] = useState(true);
+    const [messageAutoPilot, setMessageAutoPilot] = useState<Autopilot>({status: "", autopilot: "", message: "", recording: ""});
+    const [error, setError] = useState<string | null>(null);
 
-    const { setAutoPilot, messageAutoPilot, makeAutopilot, isAutoLoading } = useHandleAutopilot()
-
+    console.log(messageAutoPilot)
     /**
      * Toogle session
      */
@@ -63,40 +67,14 @@ export default function DriveAuto() {
             console.log(e)
         }
     }
-    /**
-     * Load Auto Mode
-     */
-    const loadDriveAutoMode = async() => {
-        const selectedMode = await AsyncStorage.getItem('driveAutoMode');
-        setAutoPilot(!makeAutopilot)
-        if(selectedMode) {
-            setDriveAutoMode(makeAutopilot);
-        }
-    }
 
     /**
      * Load controller type
      */
     const loadControllerType = async () => {
-        const controllerType = await AsyncStorage.getItem('selectedControl');
         setControllerType(Number(controllerType) ?? 1);
         console.log(controllerType);
     }
-
-    /**
-     * toogle autopilot Mode
-     */
-    const toogleDriveAutoMode = async() => {
-        try {
-            await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!makeAutopilot));
-        } catch (error) {
-            console.error('failed to save state driveAutoMode to AsyncStorage', error);
-        }
-
-        setAutoPilot(!makeAutopilot)
-    };
-
-
 
     const onExitPress = async() => {
         if(isSessionActive) toogleSession();
@@ -109,7 +87,29 @@ export default function DriveAuto() {
     useEffect(() => {
         // Lock orientation to landscape when component mounts
         Orientation.lockToLandscapeRight();
-        loadDriveAutoMode();
+
+        const getAutoPilot = async () => {
+            try {
+                setLoading(true)
+                const response = await fetch(AUTO_PILOT);
+                const json = await response.json();
+                if (json.status === "success" && json.autopilot === "1") {
+                    setMessageAutoPilot(json);
+                    setLoading(false)
+                } else {
+                    setError('There was an error when starting the car')
+                    setLoading(false)
+                }
+
+            } catch (error) {
+                setError('Error fetching autopilot data to start autopilot');
+                setLoading(false);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        getAutoPilot()
         loadControllerType();
 
         return () => {
@@ -122,7 +122,7 @@ export default function DriveAuto() {
     }, []);
 
 
-    const autoPilotOn = messageAutoPilot.autopilot && !isAutoLoading
+    const autoPilotOn = messageAutoPilot.autopilot === "1" && !isAutoLoading
 
     const HTML = `
 <!DOCTYPE html>
@@ -174,15 +174,7 @@ export default function DriveAuto() {
                     <IconLogout color='red' size={20}/>
                 </TouchableOpacity>
                 <Text style={styles.buttonText}>{isAutoLoading ? 'Loading autopilot mode...' : ''}</Text>
-                <TouchableOpacity
-                    onPress={toogleDriveAutoMode}
-                    style={[
-                        autoPilotOn ? styles.activeSportButton : styles.deactiveSportButton,
-                        { zIndex: 1 } // Apply green shadow when active
-                    ]}
-                >
-                    <Text style={styles.buttonText}>E</Text>
-                </TouchableOpacity>
+                <Text style={styles.buttonText}>{messageAutoPilot.autopilot === "1" && !isAutoLoading ? 'Autopilot is on' : ''}</Text>
             </View>
             <View style={styles.controlContainer}>
                 <WebView

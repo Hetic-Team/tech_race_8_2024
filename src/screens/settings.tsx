@@ -10,14 +10,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconArrowJoystick } from '../components/Icons/IconArrowJoystick';
 import { IconJoystick } from '../components/Icons/IconJoystick';
 import { IconVoice } from '../components/Icons/IconVoice';
-import { IconAutopilot } from '../components/Icons/IconAutopilot';
-import { IconAutopilotDown } from '../components/Icons/IconAutopilotDown';
-import {IconDisabled} from '../components/Icons/IconDisabled';
 import { SwitchButton } from '../components/SwitchButton';
 
 export default function Setting() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [isAutoMode, setIsAutoMode] = useState<boolean>(false)
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -25,21 +21,19 @@ export default function Setting() {
     {
       idControl: 1,
       label: 'Joystick',
-      icon: isAutoMode ? IconDisabled : IconJoystick,
+      icon: IconJoystick,
     },
     {
       idControl: 2,
       label: 'Arrow',
-      icon: isAutoMode ? IconDisabled :IconArrowJoystick,
+      icon: IconArrowJoystick,
     },
     {
       idControl: 3,
       label: 'Voice',
-      icon: isAutoMode ? IconDisabled : IconVoice,
+      icon: IconVoice,
     }
   ];
-
-  const IconAutopilotComponent = isAutoMode ?  IconAutopilot : IconAutopilotDown
 
   const showSnackbar = (message: string) => {
     setSnackbarMessage(message);
@@ -62,15 +56,7 @@ export default function Setting() {
       console.error('Failed to save state to AsyncStorage', e);
     }
   }
-  const toggleDriveMode = () => {
-    setIsAutoMode(!isAutoMode);
 
-    // try {
-    //   await AsyncStorage.setItem('driveAutoMode', JSON.stringify(isAutoMode));
-    // } catch (e) {
-    //   console.error('Failed to save state driveAutoMode to AsyncStorage', e);
-    // }
-  }
   
   const handleSelectControl = async (idControl: number) => {
     if (selectedControl === idControl) {
@@ -112,8 +98,6 @@ export default function Setting() {
         console.error('Failed to load state from AsyncStorage', e);
       }
     };
-
-
     loadSelectedControl();
     loadSportModState();
   }, []);
@@ -147,36 +131,21 @@ export default function Setting() {
               return (
                 <TouchableOpacity 
                   key={control.idControl}
-                  style={isAutoMode ? styles.joystickInactiveCard : makeCardStyles(selectedControl === control.idControl) }
+                  style={makeCardStyles(selectedControl === control.idControl) }
                   onPress={() => handleSelectControl(control.idControl)}
                 >
                   <IconComponent
                     size={50} 
-                    color={isAutoMode ? Colors.dark.placeholder :  makeIconCardStyles(selectedControl === control.idControl)}
+                    color={makeIconCardStyles(selectedControl === control.idControl)}
                   />
                   <Text 
-                    style={isAutoMode ? styles.settingsText : makeTextCardStyles(selectedControl === control.idControl) }
+                    style={makeTextCardStyles(selectedControl === control.idControl) }
                   >
                     {control.label.toUpperCase()}
                   </Text>
                 </TouchableOpacity>
               );
             })}
-
-            <TouchableOpacity
-                onPress={() => {toggleDriveMode}}
-            >
-              <IconAutopilotComponent
-                  size={50}
-                  color={isAutoMode ?  Colors.dark.primaryGreen : Colors.dark.placeholder}
-              />
-              <Text
-                  style={isAutoMode ? styles.activeSettingsText : styles.settingsText}
-              >
-                Autopilot
-              </Text>
-            </TouchableOpacity>
-
           </View>
         </View>
         <View style={styles.listSettingsContainer}>
