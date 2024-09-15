@@ -9,28 +9,30 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconArrowJoystick } from '../components/Icons/IconArrowJoystick';
 import { IconJoystick } from '../components/Icons/IconJoystick';
 import { IconVoice } from '../components/Icons/IconVoice';
+import {IconDisabled} from '../components/Icons/IconDisabled';
 import { SwitchButton } from '../components/SwitchButton';
 import useHandleAutopilot from "../hooks/useHandleAutopilot";
+import {messageParent} from "jest-worker";
 
 export default function Setting() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { setAutoPilot, messageAutoPilot, makeAutopilot } = useHandleAutopilot()
+  const { setAutoPilot, messageAutoPilot, makeAutopilot, isAutoLoading } = useHandleAutopilot()
 
   const controlList = [
     {
       idControl: 1,
       label: 'Joystick',
-      icon: IconJoystick,
+      icon: messageAutoPilot.autopilot ? IconDisabled : IconJoystick,
     },
     {
       idControl: 2,
       label: 'Arrow',
-      icon: IconArrowJoystick,
+      icon: messageAutoPilot.autopilot ? IconDisabled :IconArrowJoystick,
     },
     {
       idControl: 3,
       label: 'Voice',
-      icon: IconVoice,
+      icon: messageAutoPilot.autopilot ? IconDisabled : IconVoice,
     },
   ];
 
@@ -53,11 +55,12 @@ export default function Setting() {
     }
   }
   const toggleDriveMode = async () => {
-    setIsAutoMode(!isAutoMode);
-    isAutoMode ? setAutoPilot(true) : setIsAutoMode(false);
+    //setIsAutoMode(!isAutoMode);
+    setAutoPilot(!makeAutopilot)
 
     try {
-      await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!isAutoMode));
+      //await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!isAutoMode));
+      await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!makeAutopilot));
     } catch (e) {
       console.error('Failed to save state to AsyncStorage', e);
     }
@@ -114,7 +117,21 @@ export default function Setting() {
     loadSportModState();
     loadDriveMode();
   }, []);
+
+
+
   console.log('message in settings', messageAutoPilot.message)
+
+  const autoPilotActive =  messageAutoPilot.message === "A session is already active" || messageAutoPilot.message === "session started";
+
+  function makeCardStyles(selected: boolean) {
+    if(selected) {
+      return  styles.joystickActiveCard
+    } else {
+      return styles.joystickCard
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.navigationContainer}>
@@ -132,11 +149,11 @@ export default function Setting() {
               return (
                 <TouchableOpacity 
                   key={control.idControl}
-                  disabled={messageAutoPilot.message === 'session started'}
-                  style={[messageAutoPilot.message === 'session started' ? {backgroundColor: 'grey'} : {}, selectedControl === control.idControl ? styles.joystickActiveCard : styles.joystickCard]}
+                  disabled={messageAutoPilot.message === 'session started' || messageAutoPilot.message === 'A session is already active'}
+                  style={autoPilotActive ? styles.joystickInactiveCard : makeCardStyles(selectedControl === control.idControl) }
                   onPress={() => handleSelectControl(control.idControl)}
                 >
-                  <IconComponent 
+                  <IconComponent
                     size={50} 
                     color={selectedControl === control.idControl ? Colors.dark.primaryGreen : Colors.dark.placeholder}
                   />
@@ -153,9 +170,11 @@ export default function Setting() {
         <View style={styles.listSettingsContainer}>
           <Text style={styles.settingsLabel}>Mods :</Text>
           <View style={styles.modsSettingsContainer}>
+            <Text style={styles.settingsText}>{messageAutoPilot.message} </Text>
+            <Text style={styles.settingsText}>{isAutoLoading ? 'loading...' : ""}</Text>
           <View style={styles.rowModsSettings}>
               <Text style={styles.settingsText}>Auto Mode</Text>
-              <SwitchButton isActive={isAutoMode} onClick={toggleDriveMode} />
+              <SwitchButton isActive={makeAutopilot} onClick={toggleDriveMode} />
             </View>
             <View style={styles.rowModsSettings}>
               <Text style={styles.settingsText}>Sport Mode</Text>
@@ -247,5 +266,9 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     width: 150,
     height: 150,
+  },
+  joystickInactiveCard: {
+   width: 10,
+    height: 10
   }
 });

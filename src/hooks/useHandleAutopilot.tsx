@@ -3,36 +3,44 @@ import {AUTO_PILOT, AUTO_PILOT_STOP} from "../constants/Urls";
 import { Colors } from "../constants/Colors";
 
 type Autopilot = {
-    message: string;
-    color: string;
+    status: string,
+    autopilot: string,
+    message: string,
+    recording: string
 }
+
 export default function useHandleAutopilot() {
-    const [isLoading, setLoading] = useState(true);
-    const [messageAutoPilot, setMessageAutoPilot] = useState<Autopilot>({message: "", color: Colors.dark.placeholder});
+    const [isAutoLoading, setLoading] = useState(true);
+    const [messageAutoPilot, setMessageAutoPilot] = useState<Autopilot>({status: "", autopilot: "", message: "", recording: ""});
     const [error, setError] = useState<string | null>(null);
     const [makeAutopilot, setAutoPilot] = useState<boolean>(false)
 
-    const getAutoPilot = async () => {
+    const getAutoPilot = async (url: string) => {
         try {
-            const response = await fetch(makeAutopilot ? AUTO_PILOT: AUTO_PILOT_STOP);
-            const json = await response.text();
-            setMessageAutoPilot({ message: json, color: json === "session started" ? Colors.dark.primaryGreen : Colors.dark.placeholder });
+            const response = await fetch(url);
+            const json = await response.json();
+            if(json.status === "success") {
+                setMessageAutoPilot(json);
+            } else {
+                setError('There was an error when starting the car')
+            }
+
             console.log('message', json)
-            console.log("loading state", isLoading)
+            console.log("loading state", isAutoLoading)
         } catch (error) {
             setError('Error fetching autopilot data to start autopilot');
+            setLoading(false);
             console.error('start autopilot failed: ', error);
         } finally {
             setLoading(false);
-            console.log("loading: ", isLoading)
         }
     };
 
     useEffect(() => {
-        getAutoPilot()
+        getAutoPilot(makeAutopilot ? AUTO_PILOT : AUTO_PILOT_STOP).then(r => r)
     }, [makeAutopilot]);
 
 
-    return { isLoading, messageAutoPilot, error, setAutoPilot, makeAutopilot };
+    return { isAutoLoading, messageAutoPilot, error, setAutoPilot, makeAutopilot };
 };
 
