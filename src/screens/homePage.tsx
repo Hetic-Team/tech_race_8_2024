@@ -12,6 +12,8 @@ import {useNavigation} from '@react-navigation/native';
 import { IconLogout } from '../components/Icons/IconLogout';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Orientation from 'react-native-orientation-locker';
+import axios from 'axios';
+import { SESSION_URL } from '../constants/Urls';
 
 type HomePageRouteProp = RouteProp<RootStackParamList, 'HomePage'>;
 
@@ -41,6 +43,18 @@ useEffect(() => {
   // Lock orientation to landscape when component mounts
   Orientation.lockToPortrait();
 
+ const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://${SESSION_URL}/stream/start`);
+      console.log("Manual Session Connected");
+      return response.data;
+    } catch (error) {
+      console.error((error as any).toString());
+      throw error;
+    }
+  }
+
+  fetchData();
   // Unlock orientation when component unmounts
   return () => {
     Orientation.unlockAllOrientations();
@@ -53,7 +67,7 @@ useEffect(() => {
       <View style={[{flex:1, flexDirection:"column", justifyContent:"center", alignItems:"center", rowGap:30}]}>
       <Button label="Drive" onClick={handleDriveManually} />
       <Button label="My Trips" onClick={handleTripsData} />
-   
+
       <Button label="Modes" onClick={handleSetting} />
       </View>
     </SafeAreaView>
