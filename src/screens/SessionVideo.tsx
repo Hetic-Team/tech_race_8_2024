@@ -151,33 +151,8 @@ const styles = StyleSheet.create({
         flex: 1, // Take up remaining space
         height: 100, // Adjust height as needed
     },
-    pad: {
-        justifyContent: 'center', // Center align vertically
-        alignItems: 'center', // Center align horizontally
-        zIndex: 1, // Place the pad on top of the camera
-        width: screenWidth * 0.3, // Adjust width as needed
-        height: screenHeight, // Adjust height as needed
-    },
-    deactiveSportButton: {
-        height: 40,
-        width:40,
-        borderRadius: 40,  // Make it circular
-        backgroundColor: '#1c1c1e',  // Dark color like a car button (metallic look)
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 5,  // Basic elevation
-    },
     exitButton: {
         zIndex: 1
-    },
-    activeSportButton: {
-        height: 40,
-        width: 40,
-        backgroundColor: '#1c1c1e',  // Keep the car button look
-        shadowColor: '#4CAF50',  // Green shadow around the button
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.8,
-        shadowRadius: 20,
     },
     buttonText: {
         fontSize: 24,

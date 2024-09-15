@@ -14,47 +14,8 @@ import { CAMERA_URL } from '../constants/Urls';
 import Orientation from 'react-native-orientation-locker';
 import { IconLogout } from '../components/Icons/IconLogout';
 import useHandleAutopilot from "../hooks/useHandleAutopilot";
+import VoiceControl from "../components/VoiceCommands.tsx";
 
-
-const HTML = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joystick Control</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            background-color: #1C2631;
-        }
-        .iframe-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
-        iframe {
-            border: none;
-            border-radius: 10px;
-            max-width: 100%;
-            max-height: 100%;
-        }
-    </style>
-</head>
-<body>
-    <div class="iframe-container">
-        <iframe src="${CAMERA_URL}" title="Camera Feed" height="80%" width="400"></iframe>
-    </div>
-</body>
-</html>
-`;
 const startManualSession = async () => {
   try {
     await ActionHelper.startManualSession();
@@ -82,11 +43,11 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
     const [isSessionActive, setIsSessionActive] = useState(false);
     const [controllerType, setControllerType] = useState(1);
     const [driveAutoMode, setDriveAutoMode] = useState<boolean>(false);
-
+    const [isVoiceActive, setIsVoiceActive] = useState<boolean>(false)
 
     const { setAutoPilot, messageAutoPilot, makeAutopilot, isAutoLoading } = useHandleAutopilot()
-    console.log('in camera screen', messageAutoPilot)
-
+    console.log('message in camera screen', messageAutoPilot.message)
+    console.log('driveautomod in camera screen', driveAutoMode)
     /**
      * Toogle session
      */
@@ -108,7 +69,6 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
      */
     const loadDriveAutoMode = async() => {
       const selectedMode = await AsyncStorage.getItem('driveAutoMode');
-      console.log("Drive Mode", selectedMode);
       setAutoPilot(!makeAutopilot)
       if(selectedMode) {
         console.log("selected mode", selectedMode)
@@ -143,13 +103,10 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
      * toogle sportMode
      */
      const toogleDriveAutoMode = async() => {
-      await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!makeAutopilot));
-      const keys = await AsyncStorage.getAllKeys()
-      console.log('keys from async', keys)
        try {
-         await AsyncStorage.setItem('autopilotStatus', messageAutoPilot.autopilot)
-       } catch (e) {
-         console.error('Failed to save state autopilotStatus to AsyncStorage', e);
+         await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!makeAutopilot));
+       } catch (error) {
+         console.error('failed to save state driveAutoMode to AsyncStorage', error);
        }
 
        setAutoPilot(!makeAutopilot)
@@ -180,7 +137,52 @@ useEffect(() => {
     console.log('Session stopped and component unmounted.');
   };
 }, []);
-  return (
+
+
+  const autoPilotOn = messageAutoPilot.autopilot && !isAutoLoading
+
+
+    const HTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joystick Control</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background-color: #1C2631;
+        }
+        .iframe-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            border: 3px solid #00B86B;
+            border-radius: 10px;
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-container">
+        <iframe src="${CAMERA_URL}" title="Camera Feed" height="80%" width="100%"></iframe>
+    </div>
+</body>
+</html>
+`;
+
+    return (
     <SafeAreaView style={styles.container}>
       <View style={styles.buttonContainer}>
       <TouchableOpacity
@@ -199,11 +201,11 @@ useEffect(() => {
       >
         <Text style={styles.buttonText}>E</Text>
       </TouchableOpacity>
-      <Text style={styles.buttonText}>{isAutoLoading ? 'Loading...' : ''}</Text>
+      <Text style={styles.buttonText}>{isAutoLoading ? 'Loading autopilot mode...' : ''}</Text>
       <TouchableOpacity
         onPress={toogleDriveAutoMode}
         style={[
-          messageAutoPilot.autopilot && !isAutoLoading ? styles.activeSportButton : styles.deactiveSportButton,
+          autoPilotOn ? styles.activeSportButton : styles.deactiveSportButton,
           { zIndex: 1 } // Apply green shadow when active
         ]}
       >
@@ -222,14 +224,12 @@ useEffect(() => {
       </View>
     <View style={styles.controlContainer}>
         <View style={styles.pad}>
-
-          {/* <VoiceControl /> */}
-          {controllerType == 1 ? (
+          {controllerType == 1 && !autoPilotOn ? (
             <JoystickPad key={isSportActive ? 'sport' : 'normal'} isSportMode={isSportActive} />
-          ) : controllerType == 2 ? (
+          ) : controllerType == 2 && !autoPilotOn ? (
             <ArrowPad key={isSportActive ? 'sport' : 'normal'} isSportMode={isSportActive} />
-          ) : <View/>
-          // : <VoiceControl onActivationChange={setIsVoiceActive} />
+          ) : controllerType == 3 && !autoPilotOn ?
+              (<VoiceControl onActivationChange={setIsVoiceActive} />) : null
           }
         </View>
 
@@ -238,7 +238,7 @@ useEffect(() => {
         source={{ html: HTML }}
         style={styles.webview}
         />
-            <JoystickCamera />
+      {!autoPilotOn ? (<JoystickCamera />) : null}
     
       </View>
       </SafeAreaView>
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     height: screenHeight,
   },
   webview: {
-    flex: 1,
+    //flex: 1,
     height: 100,
   },
   pad: {
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1c1c1e',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,  // Basic elevation
+    elevation: 5,
   },
   exitButton: {
     zIndex: 1
@@ -302,15 +302,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dark.primaryGreen,
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: '#1c1c1e',
-    // shadowColor: '#4CAF50',
-    // shadowOffset: { width: 0, height: 0 },
-    // shadowOpacity: 0.8,
-    // shadowRadius: 20,
   },
   buttonText: {
     fontSize: 24,
-    color: '#fff',  // White color for the "S"
+    color: '#fff',
     fontWeight: 'bold',
   },
 });
