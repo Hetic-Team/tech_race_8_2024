@@ -1,6 +1,7 @@
 import {Colors} from '../constants/Colors';
 import React, { useEffect, useState } from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
+import { Snackbar } from 'react-native-paper'; //
 import { IconArrowLeft } from '../components/Icons/IconArowLeft';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -9,32 +10,42 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconArrowJoystick } from '../components/Icons/IconArrowJoystick';
 import { IconJoystick } from '../components/Icons/IconJoystick';
 import { IconVoice } from '../components/Icons/IconVoice';
+import {IconDisabled} from '../components/Icons/IconDisabled';
 import { SwitchButton } from '../components/SwitchButton';
+import useHandleAutopilot from "../hooks/useHandleAutopilot";
+import {messageParent} from "jest-worker";
 
 export default function Setting() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { setAutoPilot, messageAutoPilot, makeAutopilot, isAutoLoading } = useHandleAutopilot()
+  const [isAutoMode, setIsAutoMode] = useState<string>("")
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+const [snackbarMessage, setSnackbarMessage] = useState('');
+
 
   const controlList = [
     {
       idControl: 1,
       label: 'Joystick',
-      icon: IconJoystick,
+      icon: messageAutoPilot.autopilot ? IconDisabled : IconJoystick,
     },
     {
       idControl: 2,
       label: 'Arrow',
-      icon: IconArrowJoystick,
+      icon: messageAutoPilot.autopilot ? IconDisabled :IconArrowJoystick,
     },
     {
       idControl: 3,
       label: 'Voice',
-      icon: IconVoice,
+      icon: messageAutoPilot.autopilot ? IconDisabled : IconVoice,
     },
   ];
-
+  const showSnackbar = (message: string) => {
+    setSnackbarMessage(message);
+    setSnackbarVisible(true);
+  };
   const [selectedControl, setSelectedControl] = useState(1);
   const [isSportModSelected ,setIsSportModSelected] = useState(false);
-  const [isAutoMode ,setIsAutoMode] = useState(false);
 
   const handleBack = () => {
     navigation.goBack();
@@ -51,12 +62,12 @@ export default function Setting() {
     }
   }
   const toggleDriveMode = async () => {
-    setIsAutoMode(!isAutoMode);
+    setAutoPilot(!makeAutopilot)
 
     try {
-      await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!isAutoMode));
+      await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!makeAutopilot));
     } catch (e) {
-      console.error('Failed to save state to AsyncStorage', e);
+      console.error('Failed to save state driveAutoMode to AsyncStorage', e);
     }
   }
   
@@ -69,6 +80,10 @@ export default function Setting() {
 
     try {
       await AsyncStorage.setItem('selectedControl', idControl.toString());
+      if(idControl == 3 && isSportModSelected) {
+        toggleSwitchSportMod();
+        showSnackbar('Pour des raisons de sécurité, le mode sport est désactivé par défaut dans le voice.');
+      }
     } catch (e) {
       console.error('Failed to save state to AsyncStorage', e);
     }
@@ -111,7 +126,25 @@ export default function Setting() {
     loadSportModState();
     loadDriveMode();
   }, []);
-  
+
+
+
+  console.log('message in settings', messageAutoPilot.message)
+
+  function makeCardStyles(selected: boolean) {
+    return  selected ? styles.joystickActiveCard : styles.joystickCard
+  }
+
+  function makeTextCardStyles(selected:boolean) {
+    return selected ? styles.activeSettingsText : styles.settingsText
+  }
+
+  function makeIconCardStyles(selected: boolean): string {
+    return selected ? Colors.dark.primaryGreen :  Colors.dark.placeholder
+  }
+
+
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.navigationContainer}>
@@ -129,15 +162,16 @@ export default function Setting() {
               return (
                 <TouchableOpacity 
                   key={control.idControl}
-                  style={selectedControl === control.idControl ? styles.joystickActiveCard : styles.joystickCard} 
+                  disabled={!!messageAutoPilot.autopilot}
+                  style={messageAutoPilot.autopilot ? styles.joystickInactiveCard : makeCardStyles(selectedControl === control.idControl) }
                   onPress={() => handleSelectControl(control.idControl)}
                 >
-                  <IconComponent 
+                  <IconComponent
                     size={50} 
-                    color={selectedControl === control.idControl ? Colors.dark.primaryGreen : Colors.dark.placeholder}
+                    color={messageAutoPilot.autopilot ? Colors.dark.placeholder :  makeIconCardStyles(selectedControl === control.idControl)}
                   />
                   <Text 
-                    style={selectedControl === control.idControl ? styles.activeSettingsText : styles.settingsText}
+                    style={messageAutoPilot.autopilot ? styles.settingsText : makeTextCardStyles(selectedControl === control.idControl) }
                   >
                     {control.label.toUpperCase()}
                   </Text>
@@ -149,9 +183,10 @@ export default function Setting() {
         <View style={styles.listSettingsContainer}>
           <Text style={styles.settingsLabel}>Mods :</Text>
           <View style={styles.modsSettingsContainer}>
+            <Text style={styles.settingsText}>{isAutoLoading ? 'loading...' : messageAutoPilot.message} </Text>
           <View style={styles.rowModsSettings}>
               <Text style={styles.settingsText}>Auto Mode</Text>
-              <SwitchButton isActive={isAutoMode} onClick={toggleDriveMode} />
+              <SwitchButton isActive={makeAutopilot} onClick={toggleDriveMode} />
             </View>
             <View style={styles.rowModsSettings}>
               <Text style={styles.settingsText}>Sport Mode</Text>
@@ -159,6 +194,14 @@ export default function Setting() {
             </View>
           </View>
         </View>
+        <Snackbar
+      visible={snackbarVisible}
+      onDismiss={() => setSnackbarVisible(false)}
+      duration={3000}
+      style={styles.snackbar}
+    >
+      {snackbarMessage}
+    </Snackbar>
       </View>
     </SafeAreaView>
   );
@@ -243,5 +286,20 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     width: 150,
     height: 150,
-  }
+  },
+  joystickInactiveCard: {
+    borderWidth: 2,
+    borderColor: Colors.dark.errorColor,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 20,
+    width: 150,
+    height: 150,
+  },
+  snackbar: {
+    backgroundColor: Colors.dark.warning, // Customize as needed
+    color: 'white',
+  },
 });

@@ -20,6 +20,7 @@ export const Colors = {
     inputBackground: '#30445B',
     errorColor: '#E40427',
     placeholder: '#7f8c8d',
+    warning: '#ec942c'
   },
   dark: {
     text: '#ECEDEE',
@@ -34,5 +35,6 @@ export const Colors = {
     errorColor: '#E40427',
     mainBackground: '#1C2631',
     placeholder: '#7f8c8d',
+        warning: '#ec942c'
   },
 };
