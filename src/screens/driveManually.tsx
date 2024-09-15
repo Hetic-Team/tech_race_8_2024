@@ -191,16 +191,6 @@ export default function App() {
         </TouchableOpacity>
         <SpeedView speed={currentSpeed}/>
         <TouchableOpacity
-          onPress={toogleDriveAutoMode}
-          style={[
-            styles.deactiveSportButton,
-            driveAutoMode && styles.activeSportButton,
-            { zIndex: 1 } // Apply green shadow when active
-          ]}
-        >
-          <Text style={styles.buttonText}>A</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           onPress={toggleSportMode}
           style={[
             styles.deactiveSportButton,
