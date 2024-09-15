@@ -14,10 +14,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CAMERA_URL } from '../constants/Urls';
 import Orientation from 'react-native-orientation-locker';
 import { IconLogout } from '../components/Icons/IconLogout';
-import CarDoorEffect from '../components/CarDoorEffect';
 import { calculateSpeedInMph } from '../services/MovementService';
 import SpeedView from '../components/SpeedView';
-// import AnalogSwitch from '../components/AnalogSwitch';
 
 const HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -25,7 +23,6 @@ const HTML = `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joystick Control</title>
-    <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.8.1/dist/nipplejs.min.js"></script>
     <style>
         body {
             display: flex;
@@ -34,7 +31,7 @@ const HTML = `<!DOCTYPE html>
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            background-color: #1C2631; /* Ajout d'une couleur de fond si nécessaire */
+            background-color: #1C2631; 
         }
         .iframe-container {
             display: flex;
@@ -44,7 +41,8 @@ const HTML = `<!DOCTYPE html>
             height: 100%;
         }
         iframe {
-            border: 2px solid green;
+            border-radius: 10px;
+            border: 2px solid #00B86B;
             max-width: 100%;
             max-height: 100%;
         }
@@ -81,10 +79,8 @@ export default function App() {
   const [isSportActive, setIsSportActive] = useState(false);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [controllerType, setControllerType] = useState(1);
-  const [driveAutoMode, setDriveAutoMode] = useState(false);
-  const [isDoorVisible, setIsDoorVisible] = useState(true); // State for car door effect
   const [currentSpeed, setCurrentSpeed] = useState<number>(0);
-2
+
   const toogleSession = async () => {
     try {
       if (isSessionActive) {
@@ -104,12 +100,6 @@ export default function App() {
     console.log("Speed from JoystickPad:", derrivedspeed);
   };
 
-  const loadDriveAutoMode = async () => {
-    const selectedMode = await AsyncStorage.getItem('driveAutoMode');
-    console.log('Drive Mode', selectedMode);
-    setDriveAutoMode(selectedMode === 'true');
-  };
-
   const loadSportMode = async () => {
     const selectedMode = await AsyncStorage.getItem('selectedMod');
     setIsSportActive(selectedMode === 'true');
@@ -127,12 +117,6 @@ export default function App() {
     await AsyncStorage.setItem('selectedMod', JSON.stringify(newMode));
   };
 
-  const toogleDriveAutoMode = async () => {
-    const newMode = !driveAutoMode;
-    setDriveAutoMode(newMode);
-    await AsyncStorage.setItem('driveAutoMode', JSON.stringify(newMode));
-  };
-
   const onExitPress = async () => {
     if (isSessionActive) await toogleSession();
     navigation.goBack();
@@ -140,14 +124,8 @@ export default function App() {
 
   useEffect(() => {
     Orientation.lockToLandscapeRight();
-    loadDriveAutoMode();
     loadSportMode();
     loadControllerType();
-    
-    // Hide doors after a delay for demo purposes
-    // const timer = setTimeout(() => {
-    //   setIsDoorVisible(false);
-    // }, 3000); // Adjust timing as needed
 
     return () => {
       setIsSessionActive(false);
@@ -172,27 +150,17 @@ export default function App() {
           style={[
             styles.deactiveSportButton,
             isSessionActive && styles.activeSportButton,
-            { zIndex: 1 } // Apply green shadow when active
+            { zIndex: 1 }
           ]}
         >
           <Text style={styles.buttonText}>E</Text>
         </TouchableOpacity>
         <SpeedView speed={currentSpeed}/>
         <TouchableOpacity
-          onPress={toogleDriveAutoMode}
-          style={[
-            styles.deactiveSportButton,
-            driveAutoMode && styles.activeSportButton,
-            { zIndex: 1 } // Apply green shadow when active
-          ]}
-        >
-          <Text style={styles.buttonText}>A</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           onPress={toggleSportMode}
           style={[
             styles.deactiveSportButton,
-            isSportActive && styles.activeSportButton, // Apply green shadow when active
+            isSportActive && styles.activeSportButton,
           ]}
         >
           <Text style={styles.buttonText}>S</Text>
@@ -237,33 +205,33 @@ const styles = StyleSheet.create({
     flex: 5,
     backgroundColor: Colors.light.background,
     marginLeft: 20,
-    flexDirection: 'row', // Align children in a row
-    justifyContent: 'space-between', // Adjust as needed for spacing
-    alignItems: 'center', // Center align vertically
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   camera: {
-    width: screenWidth * 0.3, // Adjust width as needed
-    height: screenHeight, // Adjust height as needed
+    width: screenWidth * 0.3,
+    height: screenHeight,
   },
   webview: {
-    flex: 1, // Take up remaining space
-    height: 100, // Adjust height as needed
+    flex: 1,
+    height: 100,
   },
   pad: {
-    justifyContent: 'center', // Center align vertically
-    alignItems: 'center', // Center align horizontally
-    zIndex: 1, // Place the pad on top of the camera
-    width: screenWidth * 0.3, // Adjust width as needed
-    height: screenHeight, // Adjust height as needed
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+    width: screenWidth * 0.3,
+    height: screenHeight,
   },
   deactiveSportButton: {
     height: 40,
     width: 40,
-    borderRadius: 40, // Make it circular
-    backgroundColor: '#1c1c1e', // Dark color like a car button (metallic look)
+    borderRadius: 40,
+    backgroundColor: '#1c1c1e',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5, // Basic elevation
+    elevation: 5,
   },
   exitButton: {
     zIndex: 1
@@ -271,15 +239,15 @@ const styles = StyleSheet.create({
   activeSportButton: {
     height: 40,
     width: 40,
-    backgroundColor: '#1c1c1e', // Keep the car button look
-    shadowColor: '#4CAF50', // Green shadow around the button
+    backgroundColor: '#1c1c1e',
+    shadowColor: '#4CAF50',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 20,
   },
   buttonText: {
     fontSize: 24,
-    color: '#fff', // White color for the "S"
+    color: '#fff',
     fontWeight: 'bold',
   },
 });
