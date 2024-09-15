@@ -1,5 +1,5 @@
 // CarCommands.js
-
+// @ts-ignore
 export const getStopPayload = () => {
   const command = {
     cmd: 1,
@@ -104,4 +104,22 @@ export const mapJoystickToCameraAngles = (x, y) => {
   const horizontalAngle = 20 + ((x + 1) * 140 / 2);
 
   return [verticalAngle, horizontalAngle];
+}
+/**
+ * Calculate speed in mph
+ * @param {Number} value 
+ * @returns 
+ */
+export const calculateSpeedInMph = (value) => {
+  const maxSpeed = 4000; // Full speed in units
+  const fullSpeedMps = 0.81; // Full speed in meters per second
+  const metersPerSecondToMph = 2.23694; // Conversion factor
+  
+  // Calculate speed in meters per second
+  const speedMps = (value / maxSpeed) * fullSpeedMps;
+  
+  // Convert speed to miles per hour
+  const speedMph = speedMps * metersPerSecondToMph;
+  
+  return speedMph;
 }

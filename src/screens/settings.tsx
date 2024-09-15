@@ -1,6 +1,7 @@
 import {Colors} from '../constants/Colors';
 import React, { useEffect, useState } from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
+import { Snackbar } from 'react-native-paper'; //
 import { IconArrowLeft } from '../components/Icons/IconArowLeft';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -18,6 +19,9 @@ export default function Setting() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { setAutoPilot, messageAutoPilot, makeAutopilot, isAutoLoading } = useHandleAutopilot()
   const [isAutoMode, setIsAutoMode] = useState<string>("")
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+const [snackbarMessage, setSnackbarMessage] = useState('');
+
 
   const controlList = [
     {
@@ -36,7 +40,10 @@ export default function Setting() {
       icon: messageAutoPilot.autopilot ? IconDisabled : IconVoice,
     },
   ];
-
+  const showSnackbar = (message: string) => {
+    setSnackbarMessage(message);
+    setSnackbarVisible(true);
+  };
   const [selectedControl, setSelectedControl] = useState(1);
   const [isSportModSelected ,setIsSportModSelected] = useState(false);
 
@@ -73,6 +80,10 @@ export default function Setting() {
 
     try {
       await AsyncStorage.setItem('selectedControl', idControl.toString());
+      if(idControl == 3 && isSportModSelected) {
+        toggleSwitchSportMod();
+        showSnackbar('Pour des raisons de sécurité, le mode sport est désactivé par défaut dans le voice.');
+      }
     } catch (e) {
       console.error('Failed to save state to AsyncStorage', e);
     }
@@ -183,6 +194,14 @@ export default function Setting() {
             </View>
           </View>
         </View>
+        <Snackbar
+      visible={snackbarVisible}
+      onDismiss={() => setSnackbarVisible(false)}
+      duration={3000}
+      style={styles.snackbar}
+    >
+      {snackbarMessage}
+    </Snackbar>
       </View>
     </SafeAreaView>
   );
@@ -278,5 +297,9 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     width: 150,
     height: 150,
-  }
+  },
+  snackbar: {
+    backgroundColor: Colors.dark.warning, // Customize as needed
+    color: 'white',
+  },
 });
