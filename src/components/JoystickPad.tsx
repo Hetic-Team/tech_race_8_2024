@@ -5,11 +5,13 @@ import { BASE_URL } from '../constants/Urls';
 
 type JoystickPadProps = {
   isSportMode: boolean;
+  onSpeedChange: (speed: number) => void; // Callback function prop
 };
 
 const JoystickPad: React.FC<JoystickPadProps> = (props) => {
   const wsRef = useRef<WebSocket | null>(null);
-  const pan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;  const [throttleTimeout, setThrottleTimeout] = useState<NodeJS.Timeout | null>(null);
+  const pan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;  
+  const [throttleTimeout, setThrottleTimeout] = useState<NodeJS.Timeout | null>(null);
   const throttleDelay = 400;
 
 
@@ -100,7 +102,7 @@ const cameraOn = () => {
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gestureState) => {
         let { dx, dy } = gestureState;
-        const maxDistance = 100; // Max joystick distance
+        const maxDistance = 60; // Max joystick distance
       
         // Limit dx and dy to remain within the joystick circle
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -111,7 +113,6 @@ const cameraOn = () => {
         }
       
         const normalizedDistance = Math.min(distance, maxDistance) / maxDistance;
-        console.log(props.isSportMode)
         const dynamicSpeed = props.isSportMode ? 4000 : 1000;
         const speed = Math.round(normalizedDistance * dynamicSpeed); // Calculate speed
       
@@ -127,7 +128,7 @@ const cameraOn = () => {
         else if (dx < 0 && dy > 0) direction = 'down-left'; // Down-left diagonal
         else if (dx < 0 && dy < 0) direction = 'up-left'; // Up-left diagonal
           else direction = 'stop'; // Default stop direction
-
+          props.onSpeedChange(speed);
           // getting payload
               const payload = sendDirectionToAPI(direction, speed);
               sendPayload(payload);
@@ -145,6 +146,7 @@ const cameraOn = () => {
       },      
       onPanResponderRelease: () => {
         Animated.spring(pan, { toValue: { x: 0, y: 0 }, useNativeDriver: false }).start();
+        props.onSpeedChange(0);
           const payload = sendDirectionToAPI("stop", 0);
           sendPayload(payload);
           // Arrêter le mouvement quand le joystick est relâché
@@ -172,9 +174,9 @@ const cameraOn = () => {
 
 const styles = StyleSheet.create({
     joystickContainer: {
-      width: 150, // Reduce the width of the container
-      height: 150, // Reduce the height of the container
-      borderRadius: 100, // Adjust the border radius to match the new size
+      width: 100, // Reduce the width of the container
+      height: 100, // Reduce the height of the container
+      borderRadius: 50, // Adjust the border radius to match the new size
       backgroundColor: 'rgba(0,0,0,0.1)',
       justifyContent: 'center',
       alignItems: 'center',
@@ -182,8 +184,8 @@ const styles = StyleSheet.create({
       
     },
     joystick: {
-      width: 60, // Reduce the width of the joystick
-      height: 60, // Reduce the height of the joystick
+      width: 40, // Reduce the width of the joystick
+      height: 40, // Reduce the height of the joystick
       borderRadius: 30, // Adjust the border radius to match the new size
       backgroundColor: 'blue',
       position: 'absolute',
