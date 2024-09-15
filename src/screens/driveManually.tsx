@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View, Dimensions,TouchableOpacity} from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
 import JoystickCamera from '../components/JoystickCamera';
 import VoiceControl from '../components/VoiceCommands';
 import { Colors } from '../constants/Colors';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../App';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
 import ArrowPad from '../components/ArrowPad';
 import ActionHelper from '../services/ActionHelper';
 import JoystickPad from '../components/JoystickPad';
@@ -14,10 +14,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CAMERA_URL } from '../constants/Urls';
 import Orientation from 'react-native-orientation-locker';
 import { IconLogout } from '../components/Icons/IconLogout';
+import CarDoorEffect from '../components/CarDoorEffect';
+import { calculateSpeedInMph } from '../services/MovementService';
+import SpeedView from '../components/SpeedView';
 // import AnalogSwitch from '../components/AnalogSwitch';
 
-const HTML = `
-<!DOCTYPE html>
+const HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -53,183 +55,173 @@ const HTML = `
         <iframe src="${CAMERA_URL}" title="Camera Feed" height="80%" width="400"></iframe>
     </div>
 </body>
-</html>
-`;
+</html>`;
+
 const startManualSession = async () => {
   try {
     await ActionHelper.startManualSession();
   } catch (error) {
     console.log('Error starting manual session:', error);
   }
-}
+};
+
 const stopSession = async () => {
   try {
     await ActionHelper.stopSession();
-
   } catch (error) {
-    console.log('Error starting manual session:', error);
+    console.log('Error stopping session:', error);
   }
-}
-
-
+};
 
 // Get screen dimensions
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-  export default function App() {
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const [isSportActive, setIsSportActive] = useState(false);
-    const [isSessionActive, setIsSessionActive] = useState(false);
-    const [controllerType, setControllerType] = useState(1);
-    const [driveAutoMode, setDriveAutoMode] = useState(false);
-
-    /**
-     * Toogle session
-     */
-    const toogleSession = async () => {
-      try {
-        if (isSessionActive) {
-          await stopSession();
-          setIsSessionActive(false);
-        } else {
-          await startManualSession();
-          setIsSessionActive(true);
-        }
-      } catch (e) {
-        console.log(e)
+export default function App() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [isSportActive, setIsSportActive] = useState(false);
+  const [isSessionActive, setIsSessionActive] = useState(false);
+  const [controllerType, setControllerType] = useState(1);
+  const [driveAutoMode, setDriveAutoMode] = useState(false);
+  const [isDoorVisible, setIsDoorVisible] = useState(true); // State for car door effect
+  const [currentSpeed, setCurrentSpeed] = useState<number>(0);
+2
+  const toogleSession = async () => {
+    try {
+      if (isSessionActive) {
+        await stopSession();
+        setIsSessionActive(false);
+      } else {
+        await startManualSession();
+        setIsSessionActive(true);
       }
+    } catch (e) {
+      console.log(e);
     }
-    /**
-     * Load Sport Mode
-     */
-    const loadDriveAutoMode = async() => {
-      const selectedMode = await AsyncStorage.getItem('driveAutoMode');
-      console.log("Drive Mode", selectedMode);
-      setDriveAutoMode(selectedMode);
-    }
-       /**
-     * Load Sport Mode
-     */
-       const loadSportMode = async() => {
-        const selectedMode = await AsyncStorage.getItem('selectedMod');
-        setIsSportActive(selectedMode !== null ? Boolean(selectedMode) : false);
-      }
-    /**
-     * Load controller type
-     */
-    const loadControllerType = async () => {
-      const controllerType = await AsyncStorage.getItem('selectedControl');
-      setControllerType(Number(controllerType) ?? 1);
-      console.log(controllerType);
-    }
-    /**
-     * toogle sportMode
-     */
-    const toggleSportMode = async() => {
-      setIsSportActive(!isSportActive);
-      await AsyncStorage.setItem('selectedMod', JSON.stringify(!isSportActive));
-    };
-     /**
-     * toogle sportMode
-     */
-     const toogleDriveAutoMode = async() => {
-      setDriveAutoMode(!driveAutoMode);
-      await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!driveAutoMode));
-    };
-    const onExitPress = async() => {
-      if(isSessionActive) toogleSession();
-      navigation.goBack();
-    }
-  /**
- * Use Effect
- * Start manual session
- */
-useEffect(() => {
-    // Lock orientation to landscape when component mounts
-  Orientation.lockToLandscapeRight();
-  loadDriveAutoMode();
-  loadSportMode();
-  loadControllerType();
-
-  return () => {
-    // stop session
-    setIsSessionActive(false);
-    stopSession();
-    Orientation.lockToPortrait();
-    console.log('Session stopped and component unmounted.');
   };
-}, []);
+  const handleSpeedChange = (speed: number) => {
+    const derrivedspeed = calculateSpeedInMph(speed);
+    setCurrentSpeed(Number(derrivedspeed.toFixed(2)));
+    console.log("Speed from JoystickPad:", derrivedspeed);
+  };
+
+  const loadDriveAutoMode = async () => {
+    const selectedMode = await AsyncStorage.getItem('driveAutoMode');
+    console.log('Drive Mode', selectedMode);
+    setDriveAutoMode(selectedMode === 'true');
+  };
+
+  const loadSportMode = async () => {
+    const selectedMode = await AsyncStorage.getItem('selectedMod');
+    setIsSportActive(selectedMode === 'true');
+  };
+
+  const loadControllerType = async () => {
+    const controllerType = await AsyncStorage.getItem('selectedControl');
+    setControllerType(Number(controllerType) ?? 1);
+    console.log(controllerType);
+  };
+
+  const toggleSportMode = async () => {
+    const newMode = !isSportActive;
+    setIsSportActive(newMode);
+    await AsyncStorage.setItem('selectedMod', JSON.stringify(newMode));
+  };
+
+  const toogleDriveAutoMode = async () => {
+    const newMode = !driveAutoMode;
+    setDriveAutoMode(newMode);
+    await AsyncStorage.setItem('driveAutoMode', JSON.stringify(newMode));
+  };
+
+  const onExitPress = async () => {
+    if (isSessionActive) await toogleSession();
+    navigation.goBack();
+  };
+
+  useEffect(() => {
+    Orientation.lockToLandscapeRight();
+    loadDriveAutoMode();
+    loadSportMode();
+    loadControllerType();
+    
+    // Hide doors after a delay for demo purposes
+    // const timer = setTimeout(() => {
+    //   setIsDoorVisible(false);
+    // }, 3000); // Adjust timing as needed
+
+    return () => {
+      setIsSessionActive(false);
+      stopSession();
+      Orientation.lockToPortrait();
+      console.log('Session stopped and component unmounted.');
+    };
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
+      {/* <CarDoorEffect isVisible={isDoorVisible} /> */}
       <View style={styles.buttonContainer}>
-      <TouchableOpacity
-      style={styles.exitButton}
-        onPress={onExitPress}
-      >
-        <IconLogout color='red' size={20}/>
+        <TouchableOpacity
+          style={styles.exitButton}
+          onPress={onExitPress}
+        >
+          <IconLogout color='red' size={20} />
         </TouchableOpacity>
-      <TouchableOpacity
-        onPress={toogleSession}
-        style={[
-          styles.deactiveSportButton,
-          isSessionActive && styles.activeSportButton,
-          { zIndex: 1 } // Apply green shadow when active
-        ]}
-      >
-        <Text style={styles.buttonText}>E</Text>
-      </TouchableOpacity>
-      <Text>{driveAutoMode}</Text>
-      <TouchableOpacity
-        onPress={toogleDriveAutoMode}
-        style={[
-          styles.deactiveSportButton,
-          driveAutoMode && styles.activeSportButton,
-          { zIndex: 1 } // Apply green shadow when active
-        ]}
-      >
-        <Text style={styles.buttonText}>A</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={toggleSportMode}
-        style={[
-          styles.deactiveSportButton,
-          isSportActive && styles.activeSportButton,  // Apply green shadow when active
-        ]}
-      >
-        
-        <Text style={styles.buttonText}>S</Text>
+        <TouchableOpacity
+          onPress={toogleSession}
+          style={[
+            styles.deactiveSportButton,
+            isSessionActive && styles.activeSportButton,
+            { zIndex: 1 } // Apply green shadow when active
+          ]}
+        >
+          <Text style={styles.buttonText}>E</Text>
+        </TouchableOpacity>
+        <SpeedView speed={currentSpeed}/>
+        <TouchableOpacity
+          onPress={toogleDriveAutoMode}
+          style={[
+            styles.deactiveSportButton,
+            driveAutoMode && styles.activeSportButton,
+            { zIndex: 1 } // Apply green shadow when active
+          ]}
+        >
+          <Text style={styles.buttonText}>A</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={toggleSportMode}
+          style={[
+            styles.deactiveSportButton,
+            isSportActive && styles.activeSportButton, // Apply green shadow when active
+          ]}
+        >
+          <Text style={styles.buttonText}>S</Text>
         </TouchableOpacity>
       </View>
-    <View style={styles.controlContainer}>
+      <View style={styles.controlContainer}>
         <View style={styles.pad}>
-
-          {/* <VoiceControl /> */}
-          {controllerType == 1 ? (
-            <JoystickPad key={isSportActive ? 'sport' : 'normal'} isSportMode={isSportActive} />
+          {controllerType == 3 ? (
+         <VoiceControl/> 
           ) : controllerType == 2 ? (
             <ArrowPad key={isSportActive ? 'sport' : 'normal'} isSportMode={isSportActive} />
-          ) : <View/>
-          // : <VoiceControl onActivationChange={setIsVoiceActive} />
-          }
+          ) :   <JoystickPad key={isSportActive ? 'sport' : 'normal'} isSportMode={isSportActive}  onSpeedChange={handleSpeedChange}/>}
         </View>
-
-      <WebView
-        originWhitelist={['*']}
-        source={{ html: HTML }}
-        style={styles.webview}
+        <WebView
+          originWhitelist={['*']}
+          source={{ html: HTML }}
+          style={styles.webview}
         />
-            <JoystickCamera />
-    
+        <JoystickCamera />
       </View>
-      </SafeAreaView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%", 
+    height: '100%',
     backgroundColor: Colors.light.background,
-    width:  "100%",
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -239,11 +231,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    height: "100%",
+    height: '100%',
   },
   controlContainer: {
     flex: 5,
     backgroundColor: Colors.light.background,
+    marginLeft: 20,
     flexDirection: 'row', // Align children in a row
     justifyContent: 'space-between', // Adjust as needed for spacing
     alignItems: 'center', // Center align vertically
@@ -265,12 +258,12 @@ const styles = StyleSheet.create({
   },
   deactiveSportButton: {
     height: 40,
-    width:40,
-    borderRadius: 40,  // Make it circular
-    backgroundColor: '#1c1c1e',  // Dark color like a car button (metallic look)
+    width: 40,
+    borderRadius: 40, // Make it circular
+    backgroundColor: '#1c1c1e', // Dark color like a car button (metallic look)
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,  // Basic elevation
+    elevation: 5, // Basic elevation
   },
   exitButton: {
     zIndex: 1
@@ -278,15 +271,15 @@ const styles = StyleSheet.create({
   activeSportButton: {
     height: 40,
     width: 40,
-    backgroundColor: '#1c1c1e',  // Keep the car button look
-    shadowColor: '#4CAF50',  // Green shadow around the button
+    backgroundColor: '#1c1c1e', // Keep the car button look
+    shadowColor: '#4CAF50', // Green shadow around the button
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 20,
   },
   buttonText: {
     fontSize: 24,
-    color: '#fff',  // White color for the "S"
+    color: '#fff', // White color for the "S"
     fontWeight: 'bold',
   },
 });

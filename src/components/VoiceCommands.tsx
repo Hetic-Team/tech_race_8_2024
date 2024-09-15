@@ -3,16 +3,16 @@ import { View, Text, StyleSheet } from "react-native";
 import Voice from "@react-native-voice/voice";
 import { BASE_URL } from "../constants/Urls";
 
-interface VoiceControlProps {
-  onActivationChange: (isActivated: boolean) => void;
-}
+// interface VoiceControlProps {
+//   onActivationChange: (isActivated: boolean) => void;
+// }
 
 interface Command {
   keywords: Set<string>;
   action: (param?: string) => void;
 }
 
-const VoiceControl: React.FC<VoiceControlProps> = ({ onActivationChange }) => {
+const VoiceControl: React.FC = () => {
   const [recognizedText, setRecognizedText] = useState("");
   const [status, setStatus] = useState("Listening for command...");
   const websocket = useRef<WebSocket | null>(null);
@@ -22,6 +22,7 @@ const VoiceControl: React.FC<VoiceControlProps> = ({ onActivationChange }) => {
 
   const startListening = useCallback(async () => {
     try {
+      
       await Voice.start("en-US");
       setStatus("Listening...");
     } catch (e) {
