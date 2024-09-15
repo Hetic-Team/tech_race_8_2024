@@ -1,6 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {AUTO_PILOT, AUTO_PILOT_STOP} from "../constants/Urls";
+
 import { Colors } from "../constants/Colors";
+import {useNavigation} from "@react-navigation/native";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {RootStackParamList} from "@/App.tsx";
 
 type Autopilot = {
     status: string,
@@ -21,8 +25,7 @@ export default function useHandleAutopilot() {
             setLoading(true)
             const response = await fetch(url);
             const json = await response.json();
-            if(json.status === "success") {
-
+            if(json.status === "success" && json.autopilot === "1") {
                 setMessageAutoPilot(json);
                 setLoading(false)
             } else {

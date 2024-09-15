@@ -3,38 +3,32 @@ import {Colors} from '../constants/Colors';
 import React , { useEffect } from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
 import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
+  widthPercentageToDP as wp
 } from 'react-native-responsive-screen';
-import {useRoute, RouteProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../App';
 import {useNavigation} from '@react-navigation/native';
-import { IconLogout } from '../components/Icons/IconLogout';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Orientation from 'react-native-orientation-locker';
 
-type HomePageRouteProp = RouteProp<RootStackParamList, 'HomePage'>;
-
 export default function HomePage() {
-  const route = useRoute<HomePageRouteProp>();
-  const {vehicleIP} = route.params;
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleDriveManually = () => {
-    console.log('Button Drive Manually');
     navigation.navigate('DriveManually');
   };
 
   const handleSetting = () => {
-    console.log('Button Setting');
     navigation.navigate('Setting');
   };
 
   const handleTripsData = () => {
-    console.log('Button Setting');
     navigation.navigate('MyTripsData');
+  };
+
+  const handleDriveAuto = () => {
+    navigation.navigate('DriveAuto');
   };
 
 useEffect(() => {
@@ -51,7 +45,8 @@ useEffect(() => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={[{flex:1, flexDirection:"column", justifyContent:"center", alignItems:"center", rowGap:30}]}>
-      <Button label="Drive" onClick={handleDriveManually} />
+      <Button label="Drive Manually" onClick={handleDriveManually} />
+      <Button label="Autopilot" onClick={handleDriveAuto} />
       <Button label="My Trips" onClick={handleTripsData} />
    
       <Button label="Modes" onClick={handleSetting} />

@@ -10,36 +10,37 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconArrowJoystick } from '../components/Icons/IconArrowJoystick';
 import { IconJoystick } from '../components/Icons/IconJoystick';
 import { IconVoice } from '../components/Icons/IconVoice';
+import { IconAutopilot } from '../components/Icons/IconAutopilot';
+import { IconAutopilotDown } from '../components/Icons/IconAutopilotDown';
 import {IconDisabled} from '../components/Icons/IconDisabled';
 import { SwitchButton } from '../components/SwitchButton';
-import useHandleAutopilot from "../hooks/useHandleAutopilot";
-import {messageParent} from "jest-worker";
 
 export default function Setting() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { setAutoPilot, messageAutoPilot, makeAutopilot, isAutoLoading } = useHandleAutopilot()
-  const [isAutoMode, setIsAutoMode] = useState<string>("")
+  const [isAutoMode, setIsAutoMode] = useState<boolean>(false)
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-
 
   const controlList = [
     {
       idControl: 1,
       label: 'Joystick',
-      icon: messageAutoPilot.autopilot === "1" ? IconDisabled : IconJoystick,
+      icon: isAutoMode ? IconDisabled : IconJoystick,
     },
     {
       idControl: 2,
       label: 'Arrow',
-      icon: messageAutoPilot.autopilot === "1" ? IconDisabled :IconArrowJoystick,
+      icon: isAutoMode ? IconDisabled :IconArrowJoystick,
     },
     {
       idControl: 3,
       label: 'Voice',
-      icon: messageAutoPilot.autopilot === "1" ? IconDisabled : IconVoice,
-    },
+      icon: isAutoMode ? IconDisabled : IconVoice,
+    }
   ];
+
+  const IconAutopilotComponent = isAutoMode ?  IconAutopilot : IconAutopilotDown
+
   const showSnackbar = (message: string) => {
     setSnackbarMessage(message);
     setSnackbarVisible(true);
@@ -61,14 +62,14 @@ export default function Setting() {
       console.error('Failed to save state to AsyncStorage', e);
     }
   }
-  const toggleDriveMode = async () => {
-    setAutoPilot(!makeAutopilot)
+  const toggleDriveMode = () => {
+    setIsAutoMode(!isAutoMode);
 
-    try {
-      await AsyncStorage.setItem('driveAutoMode', JSON.stringify(!makeAutopilot));
-    } catch (e) {
-      console.error('Failed to save state driveAutoMode to AsyncStorage', e);
-    }
+    // try {
+    //   await AsyncStorage.setItem('driveAutoMode', JSON.stringify(isAutoMode));
+    // } catch (e) {
+    //   console.error('Failed to save state driveAutoMode to AsyncStorage', e);
+    // }
   }
   
   const handleSelectControl = async (idControl: number) => {
@@ -111,25 +112,11 @@ export default function Setting() {
         console.error('Failed to load state from AsyncStorage', e);
       }
     };
-    const loadDriveMode = async () => {
-      try {
-        const savedModState = await AsyncStorage.getItem('driveAutoMode');
-        if (savedModState !== null) {
-          setIsAutoMode(JSON.parse(savedModState));
-        }
-      } catch (e) {
-        console.error('Failed to load state from AsyncStorage', e);
-      }
-    };
+
 
     loadSelectedControl();
     loadSportModState();
-    loadDriveMode();
   }, []);
-
-
-
-  console.log('message in settings', messageAutoPilot.message)
 
   function makeCardStyles(selected: boolean) {
     return  selected ? styles.joystickActiveCard : styles.joystickCard
@@ -142,8 +129,6 @@ export default function Setting() {
   function makeIconCardStyles(selected: boolean): string {
     return selected ? Colors.dark.primaryGreen :  Colors.dark.placeholder
   }
-
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -162,32 +147,41 @@ export default function Setting() {
               return (
                 <TouchableOpacity 
                   key={control.idControl}
-                  disabled={messageAutoPilot.autopilot === "1"}
-                  style={messageAutoPilot.autopilot === "1" ? styles.joystickInactiveCard : makeCardStyles(selectedControl === control.idControl) }
+                  style={isAutoMode ? styles.joystickInactiveCard : makeCardStyles(selectedControl === control.idControl) }
                   onPress={() => handleSelectControl(control.idControl)}
                 >
                   <IconComponent
                     size={50} 
-                    color={messageAutoPilot.autopilot === "1" ? Colors.dark.placeholder :  makeIconCardStyles(selectedControl === control.idControl)}
+                    color={isAutoMode ? Colors.dark.placeholder :  makeIconCardStyles(selectedControl === control.idControl)}
                   />
                   <Text 
-                    style={messageAutoPilot.autopilot === "1" ? styles.settingsText : makeTextCardStyles(selectedControl === control.idControl) }
+                    style={isAutoMode ? styles.settingsText : makeTextCardStyles(selectedControl === control.idControl) }
                   >
                     {control.label.toUpperCase()}
                   </Text>
                 </TouchableOpacity>
               );
             })}
+
+            <TouchableOpacity
+                onPress={() => {toggleDriveMode}}
+            >
+              <IconAutopilotComponent
+                  size={50}
+                  color={isAutoMode ?  Colors.dark.primaryGreen : Colors.dark.placeholder}
+              />
+              <Text
+                  style={isAutoMode ? styles.activeSettingsText : styles.settingsText}
+              >
+                Autopilot
+              </Text>
+            </TouchableOpacity>
+
           </View>
         </View>
         <View style={styles.listSettingsContainer}>
           <Text style={styles.settingsLabel}>Mods :</Text>
           <View style={styles.modsSettingsContainer}>
-            <Text style={styles.settingsText}>{isAutoLoading ? 'loading...' : messageAutoPilot.message} </Text>
-            <View style={styles.rowModsSettings}>
-              <Text style={styles.settingsText}>Auto Mode</Text>
-              <SwitchButton isActive={makeAutopilot} onClick={toggleDriveMode} />
-            </View>
             <View style={styles.rowModsSettings}>
               <Text style={styles.settingsText}>Sport Mode</Text>
               <SwitchButton isActive={isSportModSelected} onClick={toggleSwitchSportMod} />
