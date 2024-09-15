@@ -3,7 +3,7 @@ import React,  {useEffect, useState, useRef} from 'react';
 import {CircleArrowLeft, ChartColumn, ChartArea, ChartNoAxesCombined} from 'lucide-react-native';
 import {View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-//import Video, {VideoRef} from 'react-native-video';
+import Video, {VideoRef} from 'react-native-video';
 import PressableButton from '../components/PressableButton'
 import {RootStackParamList} from '../../App';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -43,7 +43,7 @@ const MyTripsData = () =>  {
     
     const tripsData = raceData.filter(item => item.videos.video_urls.length > 0 && parseInt(item.duration) > 0)
 
-    //const videoRef = useRef<VideoRef>(null);
+    const videoRef = useRef<VideoRef>(null);
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     let medias: Media[] = []
     let sessions: Array<number> = []
@@ -51,7 +51,8 @@ const MyTripsData = () =>  {
     let endDate: string;
     let time: string;
     let hasStatsCount: number;
-   
+    const [isPaused, setIsPaused] = useState(false);
+
     tripsData.map((trip, index) => {
 
         if(index > (tripsData.length - 12)) {
@@ -157,16 +158,15 @@ const MyTripsData = () =>  {
       const Item = ({ session_id, url, start_date, end_date, duration, time, hasStats, is_autopilot }: Media) => (
         <View
         style={[{marginHorizontal: 20, marginVertical:15, borderRadius:5, paddingHorizontal:0, backgroundColor:Colors.dark.primaryGreen}]}>
-          <View style={[{position:"relative"}]}>
-            <View style={[{position:"absolute", top:8, right: 10, zIndex:999, backgroundColor:Colors.dark.primaryGreen, padding:4, borderRadius:5}]}>
-              <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]}>{is_autopilot ? "Automatic" : "Manual"} Driving</Text>
+          <View style={[{position:"relative",}]}>
+            <View style={[{position:'relative',width:150, marginVertical: 5, marginLeft:5,backgroundColor:Colors.dark.mainBackground}, {zIndex:999, paddingVertical:5, borderRadius:5}]}>
+              <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]}>{is_autopilot ? "Automatic" : "Manual"}</Text>
             </View>
-            {/* <Video
-              controls={true}
-              source={{uri:  url}}
-              ref={videoRef}
-              style={[styles.backgroundVideo]} /> */}
           </View>
+            {url ?
+                (<TouchableOpacity style={[{borderRadius:30, paddingHorizontal:32, paddingVertical:12, backgroundColor:Colors.dark.mainBackground, maxWidth:'80%', marginHorizontal: 'auto', marginVertical: 25}]} onPress={() => navigation.navigate('SessionVideo', {videoUrl: url})}>
+                <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]} >Watch the video</Text>
+            </TouchableOpacity>) : null}
           <TouchableOpacity style={[{paddingVertical:15, paddingHorizontal:10}]} onPress={() => navigation.navigate('TripGraphs', {tripId: session_id})}>
             <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]} >{start_date} - {end_date}</Text>
             <Text style={[{fontSize:18, fontWeight: "bold", textAlign:"center", color:Colors.dark.text}]}>{time} </Text>
@@ -242,7 +242,7 @@ const MyTripsData = () =>  {
         <FlatList
           data={activeTab === 'All' ? medias : activeData}
           renderItem={renderItem}
-          keyExtractor={(item) => item.url}
+          keyExtractor={(item) => item.session_id.toString()}
           numColumns={1}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

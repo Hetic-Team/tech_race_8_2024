@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DriveManually from './src/screens/driveManually';
 import MyTripsData from './src/screens/myTripsData';
 import TripGraphs from './src/screens/tripGraphs.tsx';
+import SessionVideo from './src/screens/SessionVideo.tsx';
 
 export type RootStackParamList = {
   SplashScreen: undefined;
@@ -18,7 +19,8 @@ export type RootStackParamList = {
   Setting: undefined;
   VehicleData: undefined;
   MyTripsData: undefined;
-  TripGraphs: {tripId: number}
+  TripGraphs: {tripId: number},
+  SessionVideo: {videoUrl: string};
 };
 
 
@@ -35,6 +37,7 @@ export default function App() {
         <Stack.Screen name="MoreInfo" component={VehicleData} />
         <Stack.Screen name="MyTripsData" component={MyTripsData} />
         <Stack.Screen name="TripGraphs" component={TripGraphs} />
+        <Stack.Screen name="SessionVideo" component={SessionVideo} />
         <Stack.Screen name="DriveManually" component={DriveManually} />
         <Stack.Screen name="Setting" component={Setting} />
       </Stack.Navigator>

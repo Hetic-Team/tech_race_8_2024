@@ -70,7 +70,7 @@ Voici les constantes avec la route api de test pour la récupération des inform
     export const SESSION_URL = '192.168.16.82:9000';
 ```
 
-## 1: Installation des dépendances
+## 1 Installation des dépendances
 
 **1.1 Dans Android Studio :** 
 - Assurez-vous d'avoir bien suivi l'installation décrite dans le lien ci-dessus en fonction de votre OS
@@ -95,7 +95,7 @@ npm install --legacy-peer-deps
 ```
 Cette solution temporaire peut au moins permettre de démarrer l'app mais ne garantie pas une navigation sans heurt.
 
-## 2: Démarrage du Serveur Metro
+## 2 Démarrage du Serveur Metro
 
 Démarrer votre Emulateur (sur Android Studio) avant d'aller plus loin.
 
@@ -113,13 +113,22 @@ npm start
 npm i --legacy-peer-deps
 ```
 
-## 3: Démarrage de l'application (sur Emulateur)
+## 3 Démarrage de l'application (sur Emulateur)
 
 3.1 Première méthode : appuyer sur la touche `a` dans le même terminal que précèdement pour démarrer un émulateur Android.
 
 3.2 2ème méthode si la première échoue:
 
 Ouvrez un _nouveau_ terminal à la racine. Démarrez votre app Android:
+
+## Mentions
+
+**Sources des médias vidéos de test (issu de pexels et stockés dans cloudinary):**
+
+>[Voiture sur une route américaine - Video by Kelly from Pexels](https://www.pexels.com/video/a-biker-traversing-a-road-built-on-mountain-sides-3055765/)<br>
+[Voiture devant un camion bâché - Video by Tom Fisk](https://www.pexels.com/video/motor-vehicles-driving-on-he-road-5871873/)<br>
+[Voiture sur autoroute - Video by Kelly](https://www.pexels.com/video/a-vehicle-on-highway-overtaking-at-high-speed-4608283/)<br>
+[Voiture roulant dans un village - Video by Kelly](https://www.pexels.com/video/traveling-footage-on-the-street-of-a-residential-area-3723542/)
 
 ### For Android
 
@@ -164,3 +173,4 @@ Pour en savoir plus (sources en anglais) :
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+

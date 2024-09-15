@@ -7,8 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
 import {useRoute, RouteProp} from '@react-navigation/native';
 import useGetTripData from '../hooks/useGetTripData'
-
-
 type TripGraphRouteProp = RouteProp<RootStackParamList, 'TripGraphs'>;
 // internal components
 import PressableButton from '../components/PressableButton'
