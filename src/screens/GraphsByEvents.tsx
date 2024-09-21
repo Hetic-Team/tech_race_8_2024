@@ -1,6 +1,6 @@
 import {Colors} from '../constants/Colors';
 import React from 'react';
-import {CircleArrowLeft} from 'lucide-react-native';
+import {ChartColumn, CircleArrowLeft} from 'lucide-react-native';
 import {View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { BarChart, PopulationPyramid } from "react-native-gifted-charts";
 import { useNavigation } from '@react-navigation/native';
@@ -8,16 +8,19 @@ import { useNavigation } from '@react-navigation/native';
 // internal components
 import PressableButton from '../components/PressableButton'
 import useGetTripData from "../hooks/useGetTripData.tsx";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {RootStackParamList} from "../../App.tsx";
 
 type ChartValue = {value: number, label: string, frontColor: string}
 type PyramidValue = {left: number, right:number, yAxisLabel: string}
 
-
 export default function GraphsByEvents() {
 
     const navigation = useNavigation();
+    const nav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     const { isLoading, raceData } = useGetTripData()
+
 
     const itemCounter = (array: Array<number>, item: Array<number>) => array.flat(Infinity).filter(currentItem => item.includes(currentItem)).length;
 
@@ -52,6 +55,16 @@ export default function GraphsByEvents() {
                 <Text style={styles.title}>Trips Statistics</Text>
                 <Text style={styles.subTitle}>Events by trip</Text>
                 <Text style={[styles.subTitle,styles.lastSubTitleLine]}>Only the 6 last trips are accounted</Text>
+
+                <View>
+                    <PressableButton
+                        css={{maxWidth:"50%", backgroundColor:Colors.light.primaryGreen, flexDirection: "row", alignItems: "center", columnGap:6}}
+                        onPress={() => nav.navigate("GraphsByTime")}
+                    >
+                        <ChartColumn color={"#fff"} size={14}/>
+                        <Text style={[{color: "white", fontWeight: "bold", fontSize: 16}]}>Stats by time</Text>
+                    </PressableButton>
+                </View>
 
                 {isLoading ? (<ActivityIndicator />) : (
 
