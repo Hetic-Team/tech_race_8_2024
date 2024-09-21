@@ -33,7 +33,6 @@ const MyTripsData = () =>  {
       }, 2000);
     }, []);
 
-    // http://192.168.87.82 - ip de Justin avec son partage co sur Android
   
     const { isLoading, raceData } = useGetTripData()
     
