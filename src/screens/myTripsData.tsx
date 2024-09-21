@@ -196,7 +196,7 @@ const MyTripsData = () =>  {
             </PressableButton>
             <PressableButton
               css={{backgroundColor:Colors.light.primaryGreen, flexDirection: "row", alignItems: "center", columnGap:6}}
-              onPress={() => navigation.navigate('MoreInfo')}
+              onPress={() => navigation.navigate('GraphsByEvents')}
               >
               <ChartColumn color={"#fff"}/>
               <Text style={[{color: "white", fontWeight: "bold", fontSize: 20}]}>Compare all</Text>

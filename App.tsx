@@ -2,7 +2,6 @@ import { StyleSheet } from 'react-native';
 import SplashScreen from './src/screens/splashScreen';
 import HomePage from './src/screens/homePage';
 import Setting from './src/screens/settings';
-import VehicleData from './src/screens/vehicleData';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DriveManually from './src/screens/driveManually';
@@ -18,9 +17,7 @@ export type RootStackParamList = {
   HomePage: { vehicleIP: string };
   AutoDrive: undefined;
   DriveManually: undefined;
-  MoreInfo: undefined;
   Setting: undefined;
-  VehicleData: undefined;
   MyTripsData: undefined;
   GraphsByEvents: undefined,
   TripGraphs: {tripId: number},
@@ -40,7 +37,6 @@ export default function App() {
       >
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="HomePage" component={HomePage} />
-        <Stack.Screen name="MoreInfo" component={VehicleData} />
         <Stack.Screen name="GraphsByTime" component={GraphsByTime} />
         <Stack.Screen name="GraphsByEvents" component={GraphsByEvents} />
         <Stack.Screen name="MyTripsData" component={MyTripsData} />
