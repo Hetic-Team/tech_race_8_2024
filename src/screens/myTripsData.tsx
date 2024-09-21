@@ -121,7 +121,7 @@ const MyTripsData = () =>  {
 
         // Replace 's' with ' seconds', and handle pluralization if needed
         if (secondsMatch) {
-            const secondsValue = secondsMatch[1]; // Extract the number preceding 's'
+            const secondsValue = secondsMatch[1];
             formattedDuration = formattedDuration.replace(
                 `${secondsValue}s`,
                 `${secondsValue} second${secondsValue !== '1' ? 's' : ''}`
@@ -145,7 +145,7 @@ const MyTripsData = () =>  {
             );
         }
 
-        return formattedDuration.trim(); // Return the formatted duration
+        return formattedDuration.trim(); 
     };
 
       const Item = ({ session_id, url, start_date, end_date, duration, time, hasStats, is_autopilot }: Media) => (
