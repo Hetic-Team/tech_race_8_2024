@@ -58,7 +58,6 @@ const JoystickCamera: React.FC = () => {
     , [xvalue, yvalue]);
   return (
     <View style={styles.container}>
-     
      <View style={styles.topContainer}>
         </View>
           <Slider
@@ -81,7 +80,6 @@ const JoystickCamera: React.FC = () => {
         maximumTrackTintColor="#000000"
         thumbTintColor={Colors.light.primaryGreen}
 />
-  
     </View>
   );
 };
@@ -115,7 +113,5 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
-  
-
 });
 export default JoystickCamera;
