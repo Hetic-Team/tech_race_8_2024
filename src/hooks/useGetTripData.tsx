@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import  { INFO_URL } from '../constants/Urls.ts'
 export interface Videos {
   video_urls: any[]

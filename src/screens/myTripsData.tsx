@@ -45,7 +45,6 @@ const MyTripsData = () =>  {
     let endDate: string;
     let time: string;
     let hasStatsCount: number;
-    const [isPaused, setIsPaused] = useState(false);
 
     tripsData.map((trip, index) => {
 
@@ -202,8 +201,6 @@ const MyTripsData = () =>  {
               <ChartColumn color={"#fff"}/>
               <Text style={[{color: "white", fontWeight: "bold", fontSize: 20}]}>Compare all</Text>
             </PressableButton>
-
-
         </View>
         <View style={styles.container}>
         <Text style={styles.title}>My Trips</Text>

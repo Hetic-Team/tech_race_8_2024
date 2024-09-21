@@ -10,6 +10,8 @@ import MyTripsData from './src/screens/myTripsData';
 import TripGraphs from './src/screens/tripGraphs.tsx';
 import SessionVideo from './src/screens/SessionVideo.tsx';
 import DriveAuto from "./src/screens/DriveAuto";
+import GraphsByEvents from "./src/screens/GraphsByEvents.tsx"
+import GraphsByTime from "./src/screens/GraphsByTime.tsx";
 
 export type RootStackParamList = {
   SplashScreen: undefined;
@@ -20,7 +22,9 @@ export type RootStackParamList = {
   Setting: undefined;
   VehicleData: undefined;
   MyTripsData: undefined;
+  GraphsByEvents: undefined,
   TripGraphs: {tripId: number},
+  GraphsByTime: undefined,
   SessionVideo: {videoUrl: string};
   DriveAuto: undefined
 };
@@ -37,6 +41,8 @@ export default function App() {
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="HomePage" component={HomePage} />
         <Stack.Screen name="MoreInfo" component={VehicleData} />
+        <Stack.Screen name="GraphsByTime" component={GraphsByTime} />
+        <Stack.Screen name="GraphsByEvents" component={GraphsByEvents} />
         <Stack.Screen name="MyTripsData" component={MyTripsData} />
         <Stack.Screen name="TripGraphs" component={TripGraphs} />
         <Stack.Screen name="SessionVideo" component={SessionVideo} />
